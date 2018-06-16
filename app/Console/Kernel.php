@@ -25,18 +25,17 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->call( function () {
-			try{
-			    $response = Telegram::setWebhook([
-				'url' => 'https://my-sandbox.strangled.net/morning-scream/webhook',
-				'certificate' => '/etc/ssl/certs/cert.pem'
-			    ]);
-			} catch(TelegramResponseException $e) {
-			    Telegram::sendMessage([
-				'chat_id' => '189423549',
-				'text' => 'Cron job failed. Response:' . $e->getResponse()
-			    ]);
-			}
-		    });
-)->twiceDaily(1, 13);
+            try{
+                Telegram::setWebhook([
+                    'url' => 'https://my-sandbox.strangled.net/morning-scream/webhook',
+                    'certificate' => '/etc/ssl/certs/cert.pem'
+                ]);
+            } catch(TelegramResponseException $e) {
+                Telegram::sendMessage([
+                    'chat_id' => '189423549',
+                    'text' => 'Cron job failed. Response:' . $e->getResponse()
+                ]);
+            }
+        })->twiceDaily(1, 13);
     }
 }
