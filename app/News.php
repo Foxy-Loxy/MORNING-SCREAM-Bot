@@ -10,8 +10,17 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 class News extends Model
 {
+
+    const NAME = 'news';
+
     protected $fillable = [
-        'chat_id', 'category'
+        'chat_id', 'categories'
     ];
+
+    public function user(){
+        return $this->belongsTo(User::class, 'chat_id', 'chat_id');
+    }
+
+
 
 }

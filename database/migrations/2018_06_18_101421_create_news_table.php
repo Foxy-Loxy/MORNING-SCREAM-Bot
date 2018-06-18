@@ -17,7 +17,7 @@ class CreateNewsTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->string('categories');
+            $table->string('categories')->nullable();
         });
     }
 

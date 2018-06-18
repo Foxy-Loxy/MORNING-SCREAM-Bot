@@ -14,4 +14,20 @@ class Schedule extends Model
         'chat_id', 'time'
     ];
 
+    const NAME = 'schedule';
+
+    public function user(){
+        return $this->belongsTo(User::class, 'chat_id', 'chat_id');
+    }
+
+
+    public function scheduleCall(User $user, string $category){
+
+    }
+
+    public function scheduleConfirm(User $user){
+
+    }
+
+
 }

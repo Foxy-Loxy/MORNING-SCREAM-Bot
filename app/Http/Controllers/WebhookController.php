@@ -1,11 +1,15 @@
 <?php namespace App\Http\Controllers;
 
+use App\News;
+use App\Schedule;
 use App\User;
+use App\Weather;
 use Illuminate\Http\JsonResponse;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Illuminate\Http\Request;
 
-class WebhookController extends Controller {
+class WebhookController extends Controller
+{
 
     const MODEL = "App\Webhook";
 
@@ -18,38 +22,59 @@ class WebhookController extends Controller {
         $user = User::where('chat_id', $request->all()['message']['chat']['id'])->get();
         //Register user if not identified
         if ($user->isEmpty())
-            User::create([
+            $user = User::create([
                 'first_name' => $rqData['message']['chat']['first_name'],
                 'last_name' => $rqData['message']['chat']['last_name'],
                 'username' => (isset($rqData['message']['chat']['username']) ? $rqData['message']['chat']['username'] : null),
                 'chat_id' => $rqData['message']['chat']['id'],
-                'services' => null
+                'services' => null,
+                'function' => null,
+                'function_args' => null
             ]);
-        //Determine command
-        if (isset($rqData['message']['entities'][0]['type']) && $rqData['message']['entities'][0]['type'] == 'bot_command') {
-            $command = substr($rqData['message']['text'], $rqData['message']['entities'][0]['offset'], $rqData['message']['entities'][0]['length']);
-            $args = substr($rqData['message']['text'], $rqData['message']['entities'][0]['length'], strlen($rqData['message']['text']));
-            switch ($command) {
-                case '/help':
-
+        $input = $rqData['message']['text'];
+        //If some service waiting for argument - skip command check
+        if ($user->function_args != null)
+            switch ($user->function) {
+                case Weather::NAME:
+                    \App\ModelClass\Weather::scheduleConfirm($user, $input);
                     break;
-                case '/setnewscat':
-
+                case News::NAME:
+                    \App\ModelClass\News::scheduleConfirm($user, $input);
                     break;
-                case '/setschedtime':
-
+                case Schedule::NAME:
+                    \App\ModelClass\Scheduler::scheduleConfirm($user, $input);
+                    break;
+                default:
+                    $user->update([
+                        'function' => null,
+                        'function_args' => null
+                    ]);
                     break;
             }
+        else {
+            //Determine command
+            switch ($input) {
+                case '\ud83d\udcf0 Set news category':
 
-        } else
-            Telegram::sendMessage([
-                'chat_id' => $rqData['message']['chat']['id'],
-                'text' => 'Hey, I\'m not a chatbot. Use commands listed in /help' ,
-                'parse_mode' => 'html'
-            ]);
+                    break;
 
+                case '\ud83c\udf21 Set weather preferences':
 
+                    break;
 
+                case '⏰ Set daily delivery time':
+
+                    break;
+
+                default:
+                    Telegram::sendMessage([
+                        'chat_id' => $rqData['message']['chat']['id'],
+                        'text' => 'Hey, I\'m not a chatbot. Use commands listed in /help',
+                        'parse_mode' => 'html'
+                    ]);
+                    break;
+            }
+        }
 
 
         if (env('DEBUG_DUMP'))
@@ -60,9 +85,8 @@ class WebhookController extends Controller {
             ]);
 
 
-
         return new JsonResponse('OK', 200);
 
-        }
+    }
 
 }

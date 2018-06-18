@@ -14,4 +14,13 @@ class Weather extends Model
         'chat_id', 'location', 'lon', 'lat'
     ];
 
+    const NAME = 'weather';
+
+    public function user(){
+        return $this->belongsTo(User::class, 'chat_id', 'chat_id');
+    }
+
+
+
+
 }

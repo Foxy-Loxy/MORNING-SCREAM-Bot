@@ -20,6 +20,8 @@ class Users extends Migration
             $table->string('username')->nullable();
             $table->string('chat_id')->unique();
             $table->string('services')->nullable();
+            $table->string('function')->nullable();
+            $table->string('function_state')->nullable();
             $table->timestamps();
         });
     }

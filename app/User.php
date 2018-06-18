@@ -10,23 +10,13 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 
 class User extends Model
 {
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+
     protected $fillable = [
-        'first_name', 'second_name', 'username', 'chat_id', 'services'
+        'first_name', 'second_name', 'username', 'chat_id', 'services', 'function', 'function_state'
     ];
 
-    /**
-     * The attributes excluded from the model's JSON form.
-     *
-     * @var array
-     */
-    protected $hidden = [
 
-    ];
+
 
     public function news(){
         return $this->hasOne(News::class, 'chat_id', 'chat_id');
@@ -35,4 +25,13 @@ class User extends Model
     public function weather(){
         return $this->hasOne(Weather::class, 'chat_id', 'chat_id');
     }
+
+    public function scheduleCall(User $user, string $category){
+
+    }
+
+    public function scheduleConfirm(User $user){
+
+    }
+
 }
