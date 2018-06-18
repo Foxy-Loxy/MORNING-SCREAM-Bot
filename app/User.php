@@ -16,7 +16,7 @@ class User extends Model
      * @var array
      */
     protected $fillable = [
-        'first_name', 'second_name', 'username', 'chat_id'
+        'first_name', 'second_name', 'username', 'chat_id', 'services'
     ];
 
     /**
@@ -27,4 +27,12 @@ class User extends Model
     protected $hidden = [
 
     ];
+
+    public function news(){
+        return $this->hasOne(News::class, 'chat_id', 'chat_id');
+    }
+
+    public function weather(){
+        return $this->hasOne(Weather::class, 'chat_id', 'chat_id');
+    }
 }
