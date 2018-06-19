@@ -6,6 +6,7 @@ use App\User;
 use App\Weather;
 use Illuminate\Http\JsonResponse;
 use Telegram\Bot\Laravel\Facades\Telegram;
+use Telegram\Bot\Keyboard\Keyboard;
 use Illuminate\Http\Request;
 
 class WebhookController extends Controller
@@ -15,11 +16,35 @@ class WebhookController extends Controller
 
     public function trigger(Request $request)
     {
-
+    
+  		$menuKeyboard = Keyboard::make([
+  			'keyboard' => [
+  							["\u{1F4F0} Set news categories"],
+  							["\u{1F321} Set weather preferences"],
+  							["\u{23F0} Set daily delivery time"]
+  			],
+  			'resize_keyboard' => true,
+  			'one_time_keyboard' => true
+  		]);
         //Get all request data
         $rqData = $request->all();
+        $user = new User();
+        if($request->has('json')){
+      	  $rqData = json_decode($request->input('json'), true);
+      	  $user = User::where('chat_id', $rqData['message']['chat']['id'])->get();
+      	} else
+      	  $user = User::where('chat_id', $request->all()['message']['chat']['id'])->get();
+      	//dd($rqData, $user);
         //Try to identifiy user
-        $user = User::where('chat_id', $request->all()['message']['chat']['id'])->get();
+
+
+        if (!env('DEBUG_DUMP'))
+            Telegram::sendMessage([
+                'chat_id' => $request->all()['message']['chat']['id'],
+                'text' => 'Yay ! Webhook reached ! ' . ($user->isNotEmpty() ? 'Hey, I know you !' : 'Welcome, I\'ll remember you. ') . ' You\'re ' . $request->all()['message']['chat']['first_name'] . ' ' . $request->all()['message']['chat']['last_name'] . ', a.k.a @' . (isset($request->all()['message']['chat']['username']) ? $request->all()['message']['chat']['username'] : 'null') . ' . Your chat id for this bot is: ' . $request->all()['message']['chat']['id'] . "\n JSON Request was: \n <code>" . json_encode($request->all(), JSON_PRETTY_PRINT) . '</code>',
+                'parse_mode' => 'html'        
+	    ]);
+
         //Register user if not identified
         if ($user->isEmpty())
             $user = User::create([
@@ -31,15 +56,19 @@ class WebhookController extends Controller
                 'function' => null,
                 'function_args' => null
             ]);
+
+		if(isset($user[0]))
+		  $user = $user[0];
+
         $input = $rqData['message']['text'];
         //If some service waiting for argument - skip command check
-        if ($user->function_args != null)
+        if ($user->function_state != null)
             switch ($user->function) {
                 case Weather::NAME:
                     \App\ModelClass\Weather::scheduleConfirm($user, $input);
                     break;
                 case News::NAME:
-                    \App\ModelClass\News::scheduleConfirm($user, $input);
+                    \App\ModelClass\News::scheduleConfirm($user, $input, $menuKeyboard);
                     break;
                 case Schedule::NAME:
                     \App\ModelClass\Scheduler::scheduleConfirm($user, $input);
@@ -52,37 +81,46 @@ class WebhookController extends Controller
                     break;
             }
         else {
-            //Determine command
             switch ($input) {
-                case '\ud83d\udcf0 Set news category':
-
+                case "\u{1F4F0} Set news categories":
+		  			Telegram::sendMessage([
+		  				'chat_id' => $user->chat_id,
+		  				'text' => 'News'
+    		  		]);
+    		  		\App\ModelClass\News::scheduleCall($user);
                     break;
 
-                case '\ud83c\udf21 Set weather preferences':
-
+                case "\u{1F321} Set weather preferences":
+                    Telegram::sendMessage([
+                        'chat_id' => $rqData['message']['chat']['id'],
+                        'text' => 'Not implemented for now',
+                        'parse_mode' => 'html',
+                        'reply_markup' => $menuKeyboard
+                    ]);
                     break;
 
-                case '⏰ Set daily delivery time':
-
+                case "\u{23F0} Set daily delivery time":
+                    Telegram::sendMessage([
+                        'chat_id' => $rqData['message']['chat']['id'],
+                        'text' => 'Not implemented for now',
+                        'parse_mode' => 'html',
+                        'reply_markup' => $menuKeyboard
+                    ]);
                     break;
 
                 default:
                     Telegram::sendMessage([
                         'chat_id' => $rqData['message']['chat']['id'],
-                        'text' => 'Hey, I\'m not a chatbot. Use commands listed in /help',
-                        'parse_mode' => 'html'
+                        'text' => 'Hey, I\'m not a chatbot. Use commands listed below',
+                        'parse_mode' => 'html',
+                        'reply_markup' => $menuKeyboard
                     ]);
                     break;
             }
         }
 
 
-        if (env('DEBUG_DUMP'))
-            Telegram::sendMessage([
-                'chat_id' => $request->all()['message']['chat']['id'],
-                'text' => 'Yay ! Webhook reached ! ' . ($user->isNotEmpty() ? 'Hey, I know you !' : 'Welcome, I\'ll remember you. ') . ' You\'re ' . $request->all()['message']['chat']['first_name'] . ' ' . $request->all()['message']['chat']['last_name'] . ', a.k.a @' . (isset($request->all()['message']['chat']['username']) ? $request->all()['message']['chat']['username'] : 'null') . ' . Your chat id for this bot is: ' . $request->all()['message']['chat']['id'] . "\n JSON Request was: \n <code>" . json_encode($request->all(), JSON_PRETTY_PRINT) . '</code>',
-                'parse_mode' => 'html'
-            ]);
+
 
 
         return new JsonResponse('OK', 200);

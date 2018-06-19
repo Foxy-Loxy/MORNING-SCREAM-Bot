@@ -32,6 +32,9 @@ class TestControllersController extends Controller {
     }
 
     public function  sendMessageToMe(Request $request){
+
+	//dd(env('DEBUG_DUMP'));
+
         $this->validate($request, [
            'msg' => 'required'
         ]);

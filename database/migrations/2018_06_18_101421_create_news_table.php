@@ -18,6 +18,8 @@ class CreateNewsTable extends Migration
                 ->onDelete('cascade');
 
             $table->string('categories')->nullable();
+            
+            $table->timestamps();
         });
     }
 

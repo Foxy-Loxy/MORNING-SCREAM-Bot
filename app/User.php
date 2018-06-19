@@ -12,7 +12,7 @@ class User extends Model
 {
 
     protected $fillable = [
-        'first_name', 'second_name', 'username', 'chat_id', 'services', 'function', 'function_state'
+        'first_name', 'last_name', 'username', 'chat_id', 'services', 'function', 'function_state'
     ];
 
 
