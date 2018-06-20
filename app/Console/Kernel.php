@@ -41,9 +41,9 @@ class Kernel extends ConsoleKernel
         })->twiceDaily(1, 13);
 
         $schedule->call( function () {
-            $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC'))->get();
+            $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC')->format('H:i'))->get();
             foreach ($timed as $time)
-                if (array_has('news',explode(',', $time->user)))
+                if (array_has('news',explode(',', $time->user->services)))
                     News::deliver($user);
         })->everyMinute();
     }

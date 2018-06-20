@@ -154,7 +154,7 @@ class Scheduler
             }
 
             $schedule->update([
-                'utc_time' => Carbon::parse($schedule->time . $schedule->time)->setTimezone('UTC')->format('H:i')
+                'utc_time' => Carbon::parse($schedule->time . $schedule->utc)->setTimezone('UTC')->format('H:i')
             ]);
 
         }

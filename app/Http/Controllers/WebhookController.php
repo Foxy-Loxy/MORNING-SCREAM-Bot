@@ -17,12 +17,17 @@ class WebhookController extends Controller
     public function trigger(Request $request)
     {
     
+    set_error_handler(function($errno, $errstr, $errfile, $errline ){
+        throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
+        });
+    
+	try{  
   		$menuKeyboard = Keyboard::make([
   			'keyboard' => [
   							["\u{1F4F0} Set news categories"],
   							["\u{1F321} Set weather preferences"],
   							["\u{23F0} Set daily delivery time"],
-  							["\u{2699} See all account preferences"]
+  							["\u{1F527} See all account preferences"]
   			],
   			'resize_keyboard' => true,
   			'one_time_keyboard' => true
@@ -109,15 +114,17 @@ class WebhookController extends Controller
     		  		\App\ModelClass\Scheduler::scheduleCall($user);
                     break;
                     
-                case "\u{2699} See all account preferences":
+            	case "Force News":
+              		\App\ModelClass\News::deliver($user);
+            		break;
+                case "\u{1F527} See all account preferences":
               		Telegram::sendMessage([
                         'chat_id' => $rqData['message']['chat']['id'],
                         'text' => "ACCOUNT SUMMARY 	\n===============\nNews categories you've subscribed for: " . ($user->news != null ? $user->news->categories : 'None') 
-                      							  ."\n===============\nDelivery time: " . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : 'None'),
+                      							  ."\n===============\nDelivery time: " . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : 'None') . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : 'None')  . ' UTC)',
                         'parse_mode' => 'html',
                         'reply_markup' => $menuKeyboard
                     ]);
-              		\App\ModelClass\News::deliver($user);
               		break;
 
                 default:
@@ -132,11 +139,19 @@ class WebhookController extends Controller
         }
 
 
-
+//		dd($input, "\u{2699} See all account preferences", "\xe2\x9a\x99", $input == "\u{2699} See all account preferences");
 
 
         return new JsonResponse('OK', 200);
-
+	}catch(\Exception $e) {
+					Telegram::sendMessage([
+                        'chat_id' => '189423549',
+                        'text' => 'Exception: ' . $e->getMessage(),
+                        'reply_markup' => $menuKeyboard
+                    ]);
+                    dd($e->getMessage());
+                    
+	}
     }
 
 }

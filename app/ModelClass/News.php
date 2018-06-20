@@ -162,10 +162,12 @@ class News
     }
 
     static public function deliver(User $user){
-
-        $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&{API_KEY}&category={CATEGORIES}";
+    
+  		$categories = explode(',', $user->news->categories);
+  		foreach($categories as $category){
+        $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&apiKey={API_KEY}&category={CATEGORY}&pageSize=5";
         $endpoint = str_replace("{API_KEY}", env('NEWS_API_TOKEN'), $endpoint);
-        $endpoint = str_replace("{CATEGORIES}", $user->news->categories, $endpoint);
+        $endpoint = str_replace("{CATEGORY}", $category, $endpoint);
 
         $curl = curl_init();
         curl_setopt_array($curl, [
@@ -177,26 +179,29 @@ class News
             ]
         ]);
         $response = curl_exec($curl);
+        
+//        dd($response, $endpoint);
 
         $response = json_decode($response, true);
 
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => '<strong>Your daily news are here !</strong>',
+            'text' => '<strong>Your daily news are here !</strong> "' . ucfirst($category) .'"',
             'parse_mode' => 'html'
         ]);
 
         foreach ($response['articles'] as $article)
             Telegram::sendMessage([
                 'chat_id' => $user->chat_id,
-                'text' => '<strong>' . $article['title'] . '</strong>\n'.
-                            'By: <em>' . $article['source']['name'] . '</em> \n'.
-                            'At: ' . Carbon::parse($article['publishedAt'])->setTimezone($user->schedule->utc) . '\n' .
-                            $article['description'] . '\n' .
+                'text' => '<strong>' . $article['title'] . '</strong>'. "\n" .
+                            'By: <em>' . $article['source']['name'] . '</em>'. "\n".
+                            'At: ' . Carbon::parse($article['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
+                            $article['description'] . "\n" .
                             '<a href="' . $article['url'] .'">More</a>',
                 'parse_mode' => 'html',
                 'disable_notification' => true
             ]);
+    }
     }
 
 }
