@@ -17,10 +17,10 @@ class CreateScheduleTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->string('time')->nullable();
+            $table->string('time')->nullable()->default('07:00');
             $table->string('utc')->nullable()->default('+00:00');
             // Constraints declaration
-
+			$table->timestamps();
         });
     }
 

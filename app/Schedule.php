@@ -11,9 +11,11 @@ use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 class Schedule extends Model
 {
     protected $fillable = [
-        'chat_id', 'time'
+        'chat_id', 'time', 'utc'
     ];
-
+    
+    protected $table = 'schedule';
+    
     const NAME = 'schedule';
 
     public function user(){

@@ -25,6 +25,10 @@ class User extends Model
     public function weather(){
         return $this->hasOne(Weather::class, 'chat_id', 'chat_id');
     }
+    
+    public function schedule(){
+        return $this->hasOne(Schedule::class, 'chat_id', 'chat_id');
+    }
 
     public function scheduleCall(User $user, string $category){
 

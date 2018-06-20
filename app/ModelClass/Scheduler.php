@@ -55,9 +55,10 @@ class Scheduler
             'one_time_keyboard' => true
         ]);
 
+//		dd($user);
 
-        if ($user->function == \App\News::NAME && $user->function_state != null) {
-
+        if ($user->function == \App\Schedule::NAME && $user->function_state != null) {
+//			dd($user);
             switch ($input) {
 
                 case "\u{274C} Cancel":
@@ -73,17 +74,27 @@ class Scheduler
                     return false;
 
                     break;
-                case "\u{1F310} Set your time zone":
+                case "\u{1F310} Set time zone":
                     $user->update([
                         'function_state' => 'WAITING_FOR_TIMEZONE'
                     ]);
-
+                    Telegram::sendMessage([
+                        'chat_id' => $user->chat_id,
+                        'text' => 'Timezone',
+                        'reply_markup' => $schedTZKeyboard
+                    ]);
+					return true;
                     break;
                 case "\u{23F0} Set time to deliver":
                     $user->update([
                         'function_state' => 'WAITING_FOR_TIME'
                     ]);
-
+                    Telegram::sendMessage([
+                        'chat_id' => $user->chat_id,
+                        'text' => 'Time',
+                        'reply_markup' => $schedKeyboard
+                    ]);
+					return true;
                     break;
             }
 
@@ -99,9 +110,8 @@ class Scheduler
             switch ($user->function_state) {
 
                 case 'WAITING_FOR_TIME':
-
                     try {
-                        $time = Carbon::parse($input)->format('H:m');
+                        $time = Carbon::parse($input)->format('H:i');
                         $schedule->update([
                             'time' => $time
                         ]);
@@ -128,6 +138,11 @@ class Scheduler
                             $schedule->update([
                                 'utc' => $tz
                             ]);
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => 'Timezone was successfully set to ' . $tz . ' UTC',
+                            'reply_markup' => $schedTZKeyboard
+                        ]);
                     } catch (\Exception $e) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,

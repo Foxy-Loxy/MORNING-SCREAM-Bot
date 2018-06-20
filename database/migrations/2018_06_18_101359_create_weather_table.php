@@ -20,6 +20,7 @@ class CreateWeatherTable extends Migration
             $table->string('lon');
             $table->string('lat');
             $table->string('location');
+            $table->timestamps();
         });
     }
 

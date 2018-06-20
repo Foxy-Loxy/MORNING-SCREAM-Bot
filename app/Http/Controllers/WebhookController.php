@@ -21,7 +21,8 @@ class WebhookController extends Controller
   			'keyboard' => [
   							["\u{1F4F0} Set news categories"],
   							["\u{1F321} Set weather preferences"],
-  							["\u{23F0} Set daily delivery time"]
+  							["\u{23F0} Set daily delivery time"],
+  							["\u{2699} See all account preferences"]
   			],
   			'resize_keyboard' => true,
   			'one_time_keyboard' => true
@@ -71,7 +72,7 @@ class WebhookController extends Controller
                     \App\ModelClass\News::scheduleConfirm($user, $input, $menuKeyboard);
                     break;
                 case Schedule::NAME:
-                    \App\ModelClass\Scheduler::scheduleConfirm($user, $input);
+                    \App\ModelClass\Scheduler::scheduleConfirm($user, $input, $menuKeyboard);
                     break;
                 default:
                     $user->update([
@@ -100,13 +101,23 @@ class WebhookController extends Controller
                     break;
 
                 case "\u{23F0} Set daily delivery time":
+
                     Telegram::sendMessage([
                         'chat_id' => $rqData['message']['chat']['id'],
-                        'text' => 'Not implemented for now',
+                        'text' => 'Scheduling',
+                    ]);
+    		  		\App\ModelClass\Scheduler::scheduleCall($user);
+                    break;
+                    
+                case "\u{2699} See all account preferences":
+              		Telegram::sendMessage([
+                        'chat_id' => $rqData['message']['chat']['id'],
+                        'text' => "ACCOUNT SUMMARY 	\n===============\nNews categories you've subscribed for: " . ($user->news != null ? $user->news->categories : 'None') 
+                      							  ."\n===============\nDelivery time: " . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : 'None'),
                         'parse_mode' => 'html',
                         'reply_markup' => $menuKeyboard
                     ]);
-                    break;
+              		break;
 
                 default:
                     Telegram::sendMessage([
