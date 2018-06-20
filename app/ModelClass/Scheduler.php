@@ -101,8 +101,7 @@ class Scheduler
             $schedule = Schedule::where('chat_id', $user->chat_id)->get();
             if ($schedule->isEmpty())
                 $schedule = \App\Schedule::create([
-                    'chat_id' => $user->chat_id,
-                    'time' => null
+                    'chat_id' => $user->chat_id
                 ]);
             else
                 $schedule = $schedule[0];
@@ -153,6 +152,10 @@ class Scheduler
                     }
                     break;
             }
+
+            $schedule->update([
+                'utc_time' => Carbon::parse($schedule->time . $schedule->time)->setTimezone('UTC')->format('H:i')
+            ]);
 
         }
     }

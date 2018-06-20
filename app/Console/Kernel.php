@@ -2,6 +2,8 @@
 
 namespace App\Console;
 
+use App\ModelClass\News;
+use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
 
@@ -37,5 +39,12 @@ class Kernel extends ConsoleKernel
                 ]);
             }
         })->twiceDaily(1, 13);
+
+        $schedule->call( function () {
+            $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC'))->get();
+            foreach ($timed as $time)
+                if (array_has('news',explode(',', $time->user)))
+                    News::deliver($user);
+        })->everyMinute();
     }
 }

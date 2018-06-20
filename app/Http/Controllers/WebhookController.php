@@ -117,6 +117,7 @@ class WebhookController extends Controller
                         'parse_mode' => 'html',
                         'reply_markup' => $menuKeyboard
                     ]);
+              		\App\ModelClass\News::deliver($user);
               		break;
 
                 default:

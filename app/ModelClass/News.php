@@ -4,6 +4,7 @@
 namespace App\ModelClass;
 
 use App\User;
+use Carbon\Carbon;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
@@ -158,6 +159,44 @@ class News
             }
         }
         return true;
+    }
+
+    static public function deliver(User $user){
+
+        $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&{API_KEY}&category={CATEGORIES}";
+        $endpoint = str_replace("{API_KEY}", env('NEWS_API_TOKEN'), $endpoint);
+        $endpoint = str_replace("{CATEGORIES}", $user->news->categories, $endpoint);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $endpoint,
+            CURLINFO_HEADER_OUT => 1,
+            CURLOPT_HTTPHEADER => [
+                'Accept:application/json',
+            ]
+        ]);
+        $response = curl_exec($curl);
+
+        $response = json_decode($response, true);
+
+        Telegram::sendMessage([
+            'chat_id' => $user->chat_id,
+            'text' => '<strong>Your daily news are here !</strong>',
+            'parse_mode' => 'html'
+        ]);
+
+        foreach ($response['articles'] as $article)
+            Telegram::sendMessage([
+                'chat_id' => $user->chat_id,
+                'text' => '<strong>' . $article['title'] . '</strong>\n'.
+                            'By: <em>' . $article['source']['name'] . '</em> \n'.
+                            'At: ' . Carbon::parse($article['publishedAt'])->setTimezone($user->schedule->utc) . '\n' .
+                            $article['description'] . '\n' .
+                            '<a href="' . $article['url'] .'">More</a>',
+                'parse_mode' => 'html',
+                'disable_notification' => true
+            ]);
     }
 
 }
