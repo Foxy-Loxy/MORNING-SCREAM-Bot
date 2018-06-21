@@ -37,9 +37,9 @@ class WebhookController extends Controller
             $user = new User();
             if ($request->has('json')) {
                 $rqData = json_decode($request->input('json'), true);
-                $user = User::where('chat_id', $rqData['message']['chat']['id'])->get();
+                $user = User::where('chat_id', (isset($rqData['message']) ? $rqData['message']['chat']['id'] : $rqData['callback_query']['from'] ))->get();
             } else
-                $user = User::where('chat_id', $request->all()['message']['chat']['id'])->get();
+                $user = User::where('chat_id', (isset($rqData['message']) ? $rqData['message']['chat']['id'] : $rqData['callback_query']['from'] ))->get();
             //dd($rqData, $user);
             //Try to identifiy user
 
@@ -52,6 +52,7 @@ class WebhookController extends Controller
                 ]);
 
             //Register user if not identified
+            
             if ($user->isEmpty())
                 $user = User::create([
                     'first_name' => $rqData['message']['chat']['first_name'],
@@ -62,6 +63,7 @@ class WebhookController extends Controller
                     'function' => null,
                     'function_args' => null
                 ]);
+            
 
             if (isset($user[0]))
                 $user = $user[0];
@@ -72,13 +74,13 @@ class WebhookController extends Controller
 
                 switch ($input[0]){
                     case 'article':
-                        dd('article reached');
-                        \App\ModelClass\News::deliver($user,$input[1],rqData['callback_query']['message']['message_id'], $input[2]);
+//                        dd('article reached', $input);
+                        \App\ModelClass\News::deliver($user,$input[1],$rqData['callback_query']['message']['message_id'], $input[2]);
+                        return true;
                         break;
                 }
-            }
-
-            $input = $rqData['message']['text'];
+            } else
+				$input = $rqData['message']['text'];
             //If some service waiting for argument - skip command check
             if ($user->function_state != null)
                 switch ($user->function) {
@@ -161,6 +163,8 @@ class WebhookController extends Controller
 
             return new JsonResponse('OK', 200);
         } catch (\Exception $e) {
+        
+        /*
             Telegram::sendMessage([
                 'chat_id' => '189423549',
                 'text' => 'Exception: <strong>' . $e->getMessage() . '</strong> at line <strong>' . $e->getLine() . '</strong> in <em>' . $e->getFile() . "</em>\n"
@@ -169,6 +173,7 @@ class WebhookController extends Controller
                 'reply_markup' => $menuKeyboard
             ]);
             dd($e->getMessage());
+        */
 
         }
     }
