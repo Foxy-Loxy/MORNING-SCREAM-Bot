@@ -3,6 +3,7 @@
 
 namespace App\ModelClass;
 
+use App\NewsCache;
 use App\User;
 use Carbon\Carbon;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -161,47 +162,157 @@ class News
         return true;
     }
 
-    static public function deliver(User $user){
-    
-  		$categories = explode(',', $user->news->categories);
-  		foreach($categories as $category){
-        $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&apiKey={API_KEY}&category={CATEGORY}&pageSize=5";
-        $endpoint = str_replace("{API_KEY}", env('NEWS_API_TOKEN'), $endpoint);
-        $endpoint = str_replace("{CATEGORY}", $category, $endpoint);
+    static public function deliver(User $user, $article = 0, $messageid = 0, $cat = '')
+    {
+        if ($article == 0 && $cat = '') {
+            $categories = explode(',', $user->news->categories);
+            $response = '';
+            foreach ($categories as $category) {
+                $cache = NewsCache::where('category', $category)->get();
+                if ($cache->isNotEmpty()) {
+                    $cache = $cache[0];
+                    $response = $cache->content;
+                } else {
+                    $i = 0;
+                    while (!News::fetch($cat)) {
+                        if ($i == 4) {
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => '<strong>Newsapi.org returned 0 news for category "' . ucfirst($category) . '". Sorry for incoveniece</strong>',
+                                'parse_mode' => 'html'
+                            ]);
+                            break;
+                        }
+                        $i++;
+                    }
 
-        $curl = curl_init();
-        curl_setopt_array($curl, [
-            CURLOPT_RETURNTRANSFER => 1,
-            CURLOPT_URL => $endpoint,
-            CURLINFO_HEADER_OUT => 1,
-            CURLOPT_HTTPHEADER => [
-                'Accept:application/json',
-            ]
-        ]);
-        $response = curl_exec($curl);
-        
-//        dd($response, $endpoint);
+                }
 
-        $response = json_decode($response, true);
+                $all = array();
 
-        Telegram::sendMessage([
-            'chat_id' => $user->chat_id,
-            'text' => '<strong>Your daily news are here !</strong> "' . ucfirst($category) .'"',
-            'parse_mode' => 'html'
-        ]);
+                if (!isset($response)) {
+                    $cache = NewsCache::where('category', $category)->get();
+                    if ($cache->isNotEmpty()) {
+                        $cache = $cache[0];
+                        $all = json_decode($cache->content, true);
+                    } else
+                        $all = json_decode($response);
 
-        foreach ($response['articles'] as $article)
-            Telegram::sendMessage([
-                'chat_id' => $user->chat_id,
-                'text' => '<strong>' . $article['title'] . '</strong>'. "\n" .
-                            'By: <em>' . $article['source']['name'] . '</em>'. "\n".
-                            'At: ' . Carbon::parse($article['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
-                            $article['description'] . "\n" .
-                            '<a href="' . $article['url'] .'">More</a>',
-                'parse_mode' => 'html',
-                'disable_notification' => true
-            ]);
+                    if ($article == 0) {
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => '<strong>Your daily news are here !</strong> "' . ucfirst($category) . '"',
+                            'parse_mode' => 'html'
+                        ]);
+
+                        $art = $all[0];
+
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
+                                'By: <em>' . $art['source']['name'] . '</em>' . "\n" .
+                                'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
+                                $art['description'] . "\n" .
+                                '<a href="' . $art['url'] . '">More</a>' . "\n" .
+                                'Article 1 of' . count($all),
+                            'parse_mode' => 'html',
+                            'disable_notification' => true,
+                            'reply_markup' => Keyboard::make()
+                                ->inline()
+                                ->row(
+                                    Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
+                                    Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article 1 ' . $category])
+                                )
+                        ]);
+                    }
+
+                }
+            }
+        } else {
+            $cache = NewsCache::where('category', $cat)->get();
+            if ($cache->isNotEmpty()) {
+                $cache = $cache[0];
+                $response = $cache->content;
+            } else {
+                News::fetch($cat);
+                $cache = NewsCache::where('category', $cat)->get();
+                if ($cache->isNotEmpty()) {
+                    $cache = $cache[0];
+                    $response = $cache->content;
+                }
+            }
+            $all = json_decode($response, true);
+            if (!isset($all[$article - 1]))
+                Telegram::editMessageText([
+                    'chat_id' => $user->chat_id,
+                    'message_id' => $messageid,
+                    'text' => '<strong> Can\'t find article by this number </strong>',
+                    'parse_mode' => 'html',
+                    'disable_notification' => true,
+                    'reply_markup' => Keyboard::make()
+                        ->inline()
+                        ->row(
+                            Keyboard::inlineButton(['text' => 'To beginning', 'callback_data' => 'article 0 ' . $cat]),
+                            Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null'])
+                        )
+                ]);
+            else {
+                $art = $all[$article - 1];
+                Telegram::editMessageText([
+                    'chat_id' => $user->chat_id,
+                    'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
+                        'By: <em>' . $art['source']['name'] . '</em>' . "\n" .
+                        'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
+                        $art['description'] . "\n" .
+                        '<a href="' . $art['url'] . '">More</a>' . "\n" .
+                        'Article ' . $article . ' of' . count($all),
+                    'parse_mode' => 'html',
+                    'disable_notification' => true,
+                    'reply_markup' => Keyboard::make()
+                        ->inline()
+                        ->row(
+                            ($article - 1 == 0 ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Previous', 'callback_data' => 'article ' . ($article - 1) . ' ' . $cat])),
+                            ($article + 1 > count($all) ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article ' . ($article + 1) . ' ' . $cat]))
+                        )
+                ]);
+            }
+
+        }
     }
+
+    static public function fetch($category)
+    {
+
+        $arts = NewsCache::where('caregory', $category)->get();
+        if ($arts->isEmpty()) {
+            $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&apiKey={API_KEY}&category={CATEGORY}&pageSize=10";
+            $endpoint = str_replace("{API_KEY}", env('NEWS_API_TOKEN'), $endpoint);
+            $endpoint = str_replace("{CATEGORY}", $category, $endpoint);
+
+            $curl = curl_init();
+            curl_setopt_array($curl, [
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_URL => $endpoint,
+                CURLINFO_HEADER_OUT => 1,
+                CURLOPT_HTTPHEADER => [
+                    'Accept:application/json',
+                ]
+            ]);
+
+            $response = curl_exec($curl);
+
+            $response = json_decode($response, true);
+
+            if (isset($response['articles']) && !empty($response['articles'])) {
+                NewsCache::create([
+                    'category' => $category,
+                    'content' => json_encode($response['articles'])
+                ]);
+                return true;
+            } else
+                return false;
+        } else
+            return true;
     }
 
 }
