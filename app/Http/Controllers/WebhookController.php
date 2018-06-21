@@ -148,15 +148,17 @@ class WebhookController extends Controller
 
 
         return new JsonResponse('OK', 200);
-	}catch(\Exception $e) {
+	} catch(\Exception $e) {
 					Telegram::sendMessage([
                         'chat_id' => '189423549',
-                        'text' => 'Exception: ' . $e->getMessage(),
+                        'text' => 'Exception: <strong>' . $e->getMessage() . '</strong> at line <strong>' . $e->getLine() . '</strong> in <em>' . $e->getFile() . "</em>\n"
+                      	. "Input was:\n <code>" . json_encode($request->all(), JSON_PRETTY_PRINT) . "</code>" ,
+                        'parse_mode' => 'html',
                         'reply_markup' => $menuKeyboard
                     ]);
                     dd($e->getMessage());
                     
-	}
+	  }
     }
 
 }
