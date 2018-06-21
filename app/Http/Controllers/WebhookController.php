@@ -123,7 +123,12 @@ class WebhookController extends Controller
                         'text' => "ACCOUNT SUMMARY 	\n===============\nNews categories you've subscribed for: " . ($user->news != null ? $user->news->categories : 'None') 
                       							  ."\n===============\nDelivery time: " . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : 'None') . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : 'None')  . ' UTC)',
                         'parse_mode' => 'html',
-                        'reply_markup' => $menuKeyboard
+                        'reply_markup' => Keyboard::make()
+                            ->inline()
+                            ->row(
+                                Keyboard::inlineButton(['text' => 'Test', 'callback_data' => 'data']),
+                                Keyboard::inlineButton(['text' => 'Btn 2', 'callback_data' => 'data_from_btn2'])
+                            )
                     ]);
               		break;
 
