@@ -12,7 +12,7 @@ class NewsCache extends Model
 {
 
     protected $fillable = [
-        'category'
+        'category', 'content', 'country'
     ];
 
     protected $table = 'news_cache';

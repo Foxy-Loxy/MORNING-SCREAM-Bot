@@ -8,6 +8,7 @@ use App\User;
 use Carbon\Carbon;
 use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
+use Telegram\Bot\Exceptions;
 
 
 class News
@@ -164,7 +165,8 @@ class News
 
     static public function deliver(User $user, $article = 0, $messageid = 0, $cat = '')
     {
-        if ($article == 0 && $cat = '') {
+
+        if ($article == 0 && $cat == '') {
             $categories = explode(',', $user->news->categories);
             $response = '';
             foreach ($categories as $category) {
@@ -174,7 +176,7 @@ class News
                     $response = $cache->content;
                 } else {
                     $i = 0;
-                    while (!News::fetch($cat)) {
+                    while (!News::fetch($category)) {
                         if ($i == 4) {
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
@@ -189,15 +191,15 @@ class News
                 }
 
                 $all = array();
-
-                if (!isset($response)) {
+				
+                if (isset($response)) {
                     $cache = NewsCache::where('category', $category)->get();
                     if ($cache->isNotEmpty()) {
                         $cache = $cache[0];
                         $all = json_decode($cache->content, true);
                     } else
                         $all = json_decode($response);
-
+//					dd($all);
                     if ($article == 0) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
@@ -214,7 +216,7 @@ class News
                                 'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
                                 $art['description'] . "\n" .
                                 '<a href="' . $art['url'] . '">More</a>' . "\n" .
-                                'Article 1 of' . count($all),
+                                'Article 1 of ' . count($all),
                             'parse_mode' => 'html',
                             'disable_notification' => true,
                             'reply_markup' => Keyboard::make()
@@ -242,6 +244,7 @@ class News
                 }
             }
             $all = json_decode($response, true);
+//            throw new \Exception($messageid);
             if (!isset($all[$article - 1]))
                 Telegram::editMessageText([
                     'chat_id' => $user->chat_id,
@@ -258,14 +261,16 @@ class News
                 ]);
             else {
                 $art = $all[$article - 1];
+                
                 Telegram::editMessageText([
                     'chat_id' => $user->chat_id,
+                    'message_id' => $messageid,
                     'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
                         'By: <em>' . $art['source']['name'] . '</em>' . "\n" .
                         'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
                         $art['description'] . "\n" .
                         '<a href="' . $art['url'] . '">More</a>' . "\n" .
-                        'Article ' . $article . ' of' . count($all),
+                        'Article ' . $article . ' of ' . count($all),
                     'parse_mode' => 'html',
                     'disable_notification' => true,
                     'reply_markup' => Keyboard::make()
@@ -275,6 +280,7 @@ class News
                             ($article + 1 > count($all) ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article ' . ($article + 1) . ' ' . $cat]))
                         )
                 ]);
+
             }
 
         }
@@ -282,8 +288,8 @@ class News
 
     static public function fetch($category)
     {
-
-        $arts = NewsCache::where('caregory', $category)->get();
+  		//dd($category);
+        $arts = NewsCache::where('category', $category)->get();
         if ($arts->isEmpty()) {
             $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&apiKey={API_KEY}&category={CATEGORY}&pageSize=10";
             $endpoint = str_replace("{API_KEY}", env('NEWS_API_TOKEN'), $endpoint);
