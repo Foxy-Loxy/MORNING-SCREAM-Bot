@@ -15,15 +15,6 @@ class User extends Model
         'first_name', 'last_name', 'username', 'chat_id', 'services', 'function', 'function_state'
     ];
 
-
-    public function exitFunction(){
-        $this->update([
-           'function' => null,
-           'function_state' => null
-        ]);
-    }
-
-
     public function news(){
         return $this->hasOne(News::class, 'chat_id', 'chat_id');
     }
@@ -34,14 +25,6 @@ class User extends Model
     
     public function schedule(){
         return $this->hasOne(Schedule::class, 'chat_id', 'chat_id');
-    }
-
-    public function scheduleCall(User $user, string $category){
-
-    }
-
-    public function scheduleConfirm(User $user){
-
     }
 
 }

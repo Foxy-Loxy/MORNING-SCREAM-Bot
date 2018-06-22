@@ -9,26 +9,32 @@
 namespace App\Helpers;
 
 use App\User;
+use \RecursiveIteratorIterator;
+use \RecursiveArrayIterator;
 
 class Helper
 {
+
+
     public static function getUserData(array $requestArray): array
     {
         $resultArray = array();
-        array_walk_recursive($requestArray, function ($array, $key) use (&$resultArray) {
-            if ($key == 'from' && isset($array['is_bot'])) {
-                if ($array['is_bot'] == true)
-                    return false;
-                if (!empty($resultArray))
-                    return false;
-                $resultArray['chat_id'] = $array['id'];
-                $resultArray['first_name'] = $array['first_name'];
-                $resultArray['last_name'] = $array['last_name'];
-                $resultArray['username'] = (isset($array['username']) ? $array['username'] : null);
-                return true;
-            }
-            return false;
-        });
+        foreach  ( new RecursiveIteratorIterator(
+                   new RecursiveArrayIterator($requestArray),
+                                RecursiveIteratorIterator::SELF_FIRST
+                                                 ) as $key => $array){
+                                                             if ($key == 'from' && isset($array['is_bot'])) {
+                                                                             if ($array['is_bot'] == true)
+                                                                                                 continue;
+                                                                                                                 if (!empty($resultArray))
+                                                                                                                                     continue;
+                                                                                                                                                     $resultArray['chat_id'] = $array['id'];
+                                                                                                                                                                     $resultArray['first_name'] = $array['first_name'];
+                                                                                                                                                                                     $resultArray['last_name'] = $array['last_name'];
+                                                                                                                                                                                                     $resultArray['username'] = (isset($array['username']) ? $array['username'] : null);
+                                                                                                                                                                                                                 }
+                                                                                                                                                                                                                         }
+                                                                                                                                                                                                                         
         if (empty($resultArray))
             throw new \Exception('Cannot find user with request data given');
         return $resultArray;
@@ -43,7 +49,7 @@ class Helper
             throw new \Exception('Cannot find input with request data given');
         else {
             $resultArray['type'] = $key;
-            $resultArray['data'] = $resultArray[$key];
+            $resultArray['data'] = $requestArray[$key];
         }
         return $resultArray;
     }

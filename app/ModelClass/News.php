@@ -220,7 +220,7 @@ class News
                         ->inline()
                         ->row(
                             Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
-                            Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article 1 ' . $category])
+                            Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article 2 ' . $category])
                         )
                 ]);
             }
@@ -249,7 +249,7 @@ class News
                         Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null'])
                     )
             ]);
-            $user->exitFunction();
+            $user->update(['function' => null, 'function_state' => null]);
             return false;
         }
 
@@ -272,7 +272,7 @@ class News
         else {
             $art = $all[$article - 1];
 
-            Telegram::editMessageText([
+          $q = Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
                 'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
@@ -280,7 +280,7 @@ class News
                     'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
                     $art['description'] . "\n" .
                     '<a href="' . $art['url'] . '">More</a>' . "\n" .
-                    'Article ' . $article . ' of ' . count($all),
+                    'Article ' . $article . ' of ' . count($all) .  "\n" . microtime(),
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
@@ -290,8 +290,8 @@ class News
                         ($article + 1 > count($all) ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article ' . ($article + 1) . ' ' . $cat]))
                     )
             ]);
+            $user->update(['function' => null, 'function_state' => null]);
         }
-        $user->exitFunction();
         return true;
     }
 

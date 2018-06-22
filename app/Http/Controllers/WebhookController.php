@@ -80,7 +80,7 @@ class WebhookController extends Controller
 
             switch ($data['type']) {
                 case 'callback_query':
-
+					$data = $data['data'];
                     //
                     // Determine callback query action and perform it
                     //
@@ -91,7 +91,7 @@ class WebhookController extends Controller
                         case 'article':
 
                             if ($user->function == 'callback' && $user->function_state == 'WAITING_TO_COMPLETE')
-                                return false;
+                                return new JsonResponse('OK', 200);
                             $user->update([
                                'function' => 'callback',
                                'function_state' => 'WAITING_TO_COMPLETE'
@@ -110,7 +110,7 @@ class WebhookController extends Controller
                     break;
 
                 case  'message':
-
+					$data = $data['data'];
                     $input = $data['text'];
 
                     //
@@ -128,7 +128,7 @@ class WebhookController extends Controller
                                 \App\ModelClass\Scheduler::scheduleConfirm($user, $input, $menuKeyboard);
                                 break;
                             default:
-                                $user->exitFunction();
+                                $user->update(['function_state' => null, 'function' => null]);
                                 break;
                         }
                         else
