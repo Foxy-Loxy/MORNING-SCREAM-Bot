@@ -16,6 +16,12 @@ class User extends Model
     ];
 
 
+    public function exitFunction(){
+        $this->update([
+           'function' => null,
+           'function_state' => null
+        ]);
+    }
 
 
     public function news(){
