@@ -198,12 +198,15 @@ class News
                 } else
                     $all = json_decode($response);
 
+				if (is_array($all)){
+
+
                 Telegram::sendMessage([
                     'chat_id' => $user->chat_id,
                     'text' => '<strong>Your daily news are here !</strong> "' . ucfirst($category) . '"',
                     'parse_mode' => 'html'
                 ]);
-
+				
                 $art = $all[0];
 
                 Telegram::sendMessage([
@@ -223,13 +226,14 @@ class News
                             Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article 2 ' . $category])
                         )
                 ]);
+                }
             }
 
         }
     }
 
 
-    static public function scrollMessage(User $user, int $article, int $messageId, string $cat)
+    static public function scrollMessage(User $user, int $article, int $messageId, int $callbackId, string $cat)
     {
         $cache = NewsCache::where('category', $cat)->get();
         if ($cache->isNotEmpty()) {
@@ -271,8 +275,12 @@ class News
             ]);
         else {
             $art = $all[$article - 1];
+            
+          Telegram::answerCallbackQuery([
+        		'callback_query_id' => $callbackId
+          ]);
 
-          $q = Telegram::editMessageText([
+          Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
                 'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .

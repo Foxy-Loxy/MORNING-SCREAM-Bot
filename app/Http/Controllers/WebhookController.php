@@ -21,11 +21,13 @@ class WebhookController extends Controller
         //
         // Listen to every exception and report it to developer
         //
+        /*
         set_error_handler(function ($errno, $errstr, $errfile, $errline) {
             throw new \ErrorException($errstr, $errno, 0, $errfile, $errline);
         });
+        */
 
-        try {
+//        try {
 
             //
             // Prepare keyboard to be supplied
@@ -96,14 +98,23 @@ class WebhookController extends Controller
                                'function' => 'callback',
                                'function_state' => 'WAITING_TO_COMPLETE'
                             ]);
-                            \App\ModelClass\News::scrollMessage($user, $input[1], $data['message']['message_id'], $input[2]);
-                            return true;
+                            \App\ModelClass\News::scrollMessage($user, $input[1], $data['message']['message_id'], $data['id'] , $input[2]);
+                            return new JsonResponse('OK', 200);
 
                             break;
                         case 'null':
+                        
+                      		Telegram::answerCallbackQuery([
+                      			'callback_query_id' => $data['id']
+                      		]);
+                            return new JsonResponse('OK', 200);
 
-                            return false;
-
+                            break;
+                            default:
+                        		Telegram::answerCallbackQuery([
+                      			'callback_query_id' => $data['id']
+                      		]);
+                            return new JsonResponse('OK', 200);                            
                             break;
                     }
 
@@ -188,7 +199,7 @@ class WebhookController extends Controller
                             }
                     break;
             }
-
+/*
         } catch (\Exception $e) {
 
             if (env('DEBUG_DUMP')) {
@@ -204,7 +215,7 @@ class WebhookController extends Controller
 
 
         }
-
+*/
         return new JsonResponse('OK', 200);
 
     }
