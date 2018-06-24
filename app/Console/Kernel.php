@@ -45,10 +45,10 @@ class Kernel extends ConsoleKernel
             $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC')->format('H:i'))->get();
             foreach ($timed as $time) {
                 $serviceArr = explode(',', $time->user->services);
-                if (in_array('news', $serviceArr))
-                    News::deliver($time);
-                if (in_array('weather', $serviceArr))
-                    Weather::deliver($time);
+                if (in_array('news', $serviceArr) && $time->user->delivery_enabled == true)
+                    News::deliver($time->user);
+//                if (in_array('weather', $serviceArr) && $time->user->delivery_enabled == true)
+//                    Weather::deliver($time->user);
             }
         })->everyMinute();
     }

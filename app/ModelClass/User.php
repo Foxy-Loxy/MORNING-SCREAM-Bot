@@ -58,7 +58,7 @@ class User
             'one_time_keyboard' => true
         ]);
 
-        if ($user->function == \App\News::NAME && $user->function_state != null) {
+        if ($user->function == \App\User::NAME && $user->function_state != null) {
 
             switch ($input) {
 
@@ -83,7 +83,7 @@ class User
 
                         case "\u{1F4EE} Set services enabled to deliver":
                             $user->update([
-                                'function_status' => 'WAITING_FOR_SERVICES'
+                                'function_state' => 'WAITING_FOR_SERVICES'
                             ]);
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
@@ -93,6 +93,18 @@ class User
                             break;
 
                         case "\u{1F579} Toggle delivering status":
+                        $user->update([
+                      	  'delivery_enabled' => !$user->delivery_enabled
+                        ]);
+                                                    Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => 'Delivery now is ' . ($user->delivery_enabled ? 'enabled' : 'disabled'),
+                                'reply_markup' => $catKeyboard
+                            ]);
+                            break;
+                        
+                        
+                        
                             $user->update([
                                 'delivery_enabled' => !$user->delivery_enabled
                             ]);
@@ -115,8 +127,9 @@ class User
 
                     break;
 
-                case "WAITING_FOR_SERVICES":
-                    $serArr = explode(',', ($user->services == null ? "" : $user->services == null));
+                case 'WAITING_FOR_SERVICES':
+                    $serArr = explode(',', ($user->services == null ? "" : $user->services));
+
                     switch ($input) {
                         case "\u{1F4F0} News":
                             if (in_array('news', $serArr))
