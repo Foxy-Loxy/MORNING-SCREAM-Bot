@@ -37,7 +37,7 @@ class WebhookController extends Controller
                     ["\u{1F4F0} Set news categories"],
                     ["\u{1F321} Set weather preferences"],
                     ["\u{23F0} Set daily delivery time"],
-                    ["\u{1F527} See all account preferences"]
+                    ["\u{1F527} See all account preferences" , "\u{1F527} Set account preferences"]
                 ],
                 'resize_keyboard' => true,
                 'one_time_keyboard' => true
@@ -67,9 +67,9 @@ class WebhookController extends Controller
                     'last_name' => $user_data['last_name'],
                     'username' => $user_data['username'],
                     'chat_id' => $user_data['chat_id'],
-                    'services' => null,
+                    'services' => 'news,weather',
                     'function' => null,
-                    'function_args' => null
+                    'function_args' => null,
                 ]);
             else
                 $user = $user[0];
@@ -138,6 +138,9 @@ class WebhookController extends Controller
                             case Schedule::NAME:
                                 \App\ModelClass\Scheduler::scheduleConfirm($user, $input, $menuKeyboard);
                                 break;
+                            case User::NAME:
+                                \App\ModelClass\User::scheduleConfirm($user, $input, $menuKeyboard);
+                                break;
                             default:
                                 $user->update(['function_state' => null, 'function' => null]);
                                 break;
@@ -185,6 +188,14 @@ class WebhookController extends Controller
                                                 Keyboard::inlineButton(['text' => 'Test', 'callback_data' => 'data']),
                                                 Keyboard::inlineButton(['text' => 'Btn 2', 'callback_data' => 'data_from_btn2'])
                                             )
+                                    ]);
+                                    break;
+
+                                case "\u{1F527} Set account preferences":
+                                    \App\ModelClass\User::scheduleCall($user);
+                                    Telegram::sendMessage([
+                                        'chat_id' => $rqData['message']['chat']['id'],
+                                        'text' => 'Settings',
                                     ]);
                                     break;
 
