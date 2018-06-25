@@ -88,20 +88,27 @@ class WebhookController extends Controller
                 //
                 $input = $rqData['callback_query']['data'];
                 $input = explode(' ', $input);
-
-                switch ($input[0]) {
-                    case 'article':
-
                         if ($user->function == 'callback' && $user->function_state == 'WAITING_TO_COMPLETE')
                             return new JsonResponse('OK', 200);
+                switch ($input[0]) {
+                    case 'article':
                         $user->update([
                             'function' => 'callback',
                             'function_state' => 'WAITING_TO_COMPLETE'
                         ]);
                         \App\ModelClass\News::scrollMessage($user, $input[1], $data['message']['message_id'], $data['id'], $input[2]);
                         return new JsonResponse('OK', 200);
-
                         break;
+                        
+                    case 'weather':
+                        $user->update([
+                            'function' => 'callback',
+                            'function_state' => 'WAITING_TO_COMPLETE'
+                        ]);
+                        \App\ModelClass\Weather::scrollMessage($user, $input[1], $data['message']['message_id'], $data['id']);
+                        return new JsonResponse('OK', 200);
+                  	  break;
+                  	  
                     case 'null':
 
                         Telegram::answerCallbackQuery([
@@ -176,6 +183,9 @@ class WebhookController extends Controller
 
                         case "Force News":
                             \App\ModelClass\News::deliver($user);
+                            break;
+                        case "Force Weather":
+                            \App\ModelClass\Weather::deliver($user);
                             break;
                         case "\u{1F527} See all account preferences":
                             Telegram::sendMessage([
