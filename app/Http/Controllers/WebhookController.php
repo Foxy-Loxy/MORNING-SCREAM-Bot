@@ -105,7 +105,7 @@ class WebhookController extends Controller
                             'function' => 'callback',
                             'function_state' => 'WAITING_TO_COMPLETE'
                         ]);
-                        \App\ModelClass\Weather::scrollMessage($user, $input[1], $data['message']['message_id'], $data['id']);
+                        \App\ModelClass\Weather::scrollMessage($user, $data['message']['message_id'], $data['id'], $input[1]);
                         return new JsonResponse('OK', 200);
                   	  break;
                   	  

@@ -246,7 +246,8 @@ class Weather
 
     static public function scrollMessage(User $user, int $messageId, int $callbackId, int $page)
     {
-        $cache = \App\Weather::where('location', $user->weather->location)->where('units', $user->weather->units)->get();
+        $cache = \App\WeatherCache::where('location', $user->weather->location)->where('units', $user->weather->units)->get();
+        $response = '';
         if ($cache->isNotEmpty()) {
             $cache = $cache[0];
             $response = $cache->content;
@@ -270,19 +271,22 @@ class Weather
             $user->update(['function' => null, 'function_state' => null]);
             return false;
         }
-
+//		Telegram::sendMessage([
+//			'chat_id' => $user->chat_id,
+//			'text' => print_r($response, true) . $user->weather->location . $user->weather->units . $cache->content . 'poi'
+//		]);
         $all = json_decode($response, true);
 
         $offset = ($page * 8) - 8;
 
-        $weather = $all = array_slice($all, $offset, 8);
+        $weather =  array_slice($all, $offset, 8);
 
         $text = '';
 
         foreach ($weather as $entry) {
             $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
-            $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->format('H:i A')) . ' ' . (gmp_sign($temp) == 1 ? '+' : '-') . $temp . ' ';
-            switch ($entry['weather']['description']) {
+            $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->format('H:i A')) . ' ' . (Helper::sign($temp) == 1 ? '+' : '-') . $temp . ' ';
+            switch ($entry['weather'][0]['description']) {
                 case 'clear sky':
                     $text .= "\u{2600}";
                     break;
@@ -311,7 +315,7 @@ class Weather
                     $text .= "\u{1F32B}";
                     break;
             }
-            $text .= ' ' . $entry['weather']['main'] . "\n";
+            $text .= ' ' . $entry['weather'][0]['main'] . "\n";
         }
 
         Telegram::answerCallbackQuery([
