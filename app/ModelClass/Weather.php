@@ -26,9 +26,8 @@ class Weather
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
-
         $tmp = \App\Weather::where('chat_id', $user->chat_id)->get();
-        if($tmp->isEmpty)
+        if ($tmp->isEmpty)
             \App\Weather::create([
                 'chat_id' => $user->chat_id
             ]);
@@ -111,7 +110,7 @@ class Weather
             switch ($user->function_state) {
 
                 case 'WAITING_FOR_LOCATION':
-                    if (!isset($input['latitude'])){
+                    if (!isset($input['latitude'])) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
                             'text' => 'Send me your location to set weather origin',
@@ -141,104 +140,104 @@ class Weather
         $location = $user->weather->location;
         $response = '';
         $cache = WeatherCache::where('location', $location)->get();
-            if ($cache->isNotEmpty()) {
-                $cache = $cache[0];
-                $response = $cache->content;
-            } else {
-                $i = 0;
-                while (!Weather::fetch($location)) {
-                    if ($i == 4) {
-                        Telegram::sendMessage([
-                            'chat_id' => $user->chat_id,
-                            'text' => '<strong>OpenWeatherMap.org returned no weather for location "' . ucfirst($location) . '". Sorry for incovenience</strong>',
-                            'parse_mode' => 'html'
-                        ]);
-                        break;
-                    }
-                    $i++;
-                }
-
-            }
-
-            $all = array();
-
-            if (isset($response)) {
-                $cache = WeatherCache::where('location', $location)->where('units', $user->weather->units)->get();
-                if ($cache->isNotEmpty()) {
-                    $cache = $cache[0];
-                    $all = json_decode($cache->content, true);
-                } else
-                    $all = json_decode($response);
-
-                if (is_array($all)){
+        if ($cache->isNotEmpty()) {
+            $cache = $cache[0];
+            $response = $cache->content;
+        } else {
+            $i = 0;
+            while (!Weather::fetch($location)) {
+                if ($i == 4) {
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => '<strong>Your daily weather is here here !</strong> "' . $location . '"',
+                        'text' => '<strong>OpenWeatherMap.org returned no weather for location "' . ucfirst($location) . '". Sorry for incovenience</strong>',
                         'parse_mode' => 'html'
                     ]);
-
-                    $all = array_slice($all, 0, 8);
-                    $text = '<strong>' . Carbon::createFromTimestamp($all[1]['dt'])->format('d-m-Y') . '</strong>' . "\n";
-                    foreach ($all as $entry) {
-                        $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
-                        $text .= ( $user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->format('H:i') :  Carbon::createFromTimestamp($entry['dt'])->format('H:i A'))  . ' ' .(gmp_sign($temp) == 1 ? '+' : '-') . $temp . ' ';
-                        switch ($entry['weather']['description']){
-                            case 'clear sky':
-                                $text .= "\u{2600}";
-                                break;
-                            case 'few clouds':
-                                $text .= "\u{1F324}";
-                                break;
-                            case 'scattered clouds':
-                                $text .= "\u{1F325}";
-                                break;
-                            case 'broken clouds':
-                                $text .= "\u{1F325}";
-                                break;
-                            case 'shower rain':
-                                $text .= "\u{1F326}";
-                                break;
-                            case 'rain':
-                                $text .= "\u{1F327}";
-                                break;
-                            case 'thunderstorm':
-                                $text .= "\u{26C8}";
-                                break;
-                            case 'snow':
-                                $text .= "\u{1F328}";
-                                break;
-                            case 'mist':
-                                $text .= "\u{1F32B}";
-                                break;
-                        }
-                        $text .= ' ' . $entry['weather']['main'] . "\n";
-                    }
-
-                    Telegram::sendMessage([
-                        'chat_id' => $user->chat_id,
-                        'text' => $text,
-                        'parse_mode' => 'html',
-                        'disable_notification' => true,
-                        'reply_markup' => Keyboard::make()
-                            ->inline()
-                            ->row(
-                                Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->format('d-m-Y'), 'callback_data' => 'null']),
-                                Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDay()->format('d-m-Y'), 'callback_data' => 'weather 2']),
-                                Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDays(2)->format('d-m-Y'), 'callback_data' => 'weather 3']),
-                                Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDays(3)->format('d-m-Y'), 'callback_data' => 'weather 4']),
-                                Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDays(4)->format('d-m-Y'), 'callback_data' => 'weather 5'])
-                            )
-                    ]);
+                    break;
                 }
+                $i++;
             }
+
+        }
+
+        $all = array();
+
+        if (isset($response)) {
+            $cache = WeatherCache::where('location', $location)->where('units', $user->weather->units)->get();
+            if ($cache->isNotEmpty()) {
+                $cache = $cache[0];
+                $all = json_decode($cache->content, true);
+            } else
+                $all = json_decode($response);
+
+            if (is_array($all)) {
+                Telegram::sendMessage([
+                    'chat_id' => $user->chat_id,
+                    'text' => '<strong>Your daily weather is here here !</strong> "' . $location . '"',
+                    'parse_mode' => 'html'
+                ]);
+
+                $all = array_slice($all, 0, 8);
+                $text = '<strong>' . Carbon::createFromTimestamp($all[1]['dt'])->format('d-m-Y') . '</strong>' . "\n";
+                foreach ($all as $entry) {
+                    $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
+                    $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->format('H:i A')) . ' ' . (gmp_sign($temp) == 1 ? '+' : '-') . $temp . ' ';
+                    switch ($entry['weather']['description']) {
+                        case 'clear sky':
+                            $text .= "\u{2600}";
+                            break;
+                        case 'few clouds':
+                            $text .= "\u{1F324}";
+                            break;
+                        case 'scattered clouds':
+                            $text .= "\u{1F325}";
+                            break;
+                        case 'broken clouds':
+                            $text .= "\u{1F325}";
+                            break;
+                        case 'shower rain':
+                            $text .= "\u{1F326}";
+                            break;
+                        case 'rain':
+                            $text .= "\u{1F327}";
+                            break;
+                        case 'thunderstorm':
+                            $text .= "\u{26C8}";
+                            break;
+                        case 'snow':
+                            $text .= "\u{1F328}";
+                            break;
+                        case 'mist':
+                            $text .= "\u{1F32B}";
+                            break;
+                    }
+                    $text .= ' ' . $entry['weather']['main'] . "\n";
+                }
+
+                Telegram::sendMessage([
+                    'chat_id' => $user->chat_id,
+                    'text' => $text,
+                    'parse_mode' => 'html',
+                    'disable_notification' => true,
+                    'reply_markup' => Keyboard::make()
+                        ->inline()
+                        ->row(
+                            Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->format('d-m-Y') . '<', 'callback_data' => 'null']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDay()->format('d-m-Y'), 'callback_data' => 'weather 2']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDays(2)->format('d-m-Y'), 'callback_data' => 'weather 3']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDays(3)->format('d-m-Y'), 'callback_data' => 'weather 4']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->addDays(4)->format('d-m-Y'), 'callback_data' => 'weather 5'])
+                        )
+                ]);
+            }
+        }
 
 
     }
 
 
-    static public function scrollMessage(User $user, int $article, int $messageId, int $callbackId, string $cat)
+    static public function scrollMessage(User $user, int $messageId, int $callbackId, int $page)
     {
-        $cache = NewsCache::where('category', $cat)->get();
+        $cache = Weather::where('location', $user->weather->location)->where('units', $user->weather->units)->get();
         if ($cache->isNotEmpty()) {
             $cache = $cache[0];
             $response = $cache->content;
@@ -246,12 +245,15 @@ class Weather
             Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
-                'text' => '<strong> Can\'t find news for this category. Seems like they\'ve expired in cache. Use "Force News" command to get new instance of news, or wait for your next daily delivery </strong>',
+                'text' => '<strong> Can\'t find news for this date. Seems like they\'ve expired in cache. Use "Force Weather" command to get new instance of weather, or wait for your next daily delivery </strong>',
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
                     ->inline()
                     ->row(
+                        Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
+                        Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
+                        Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
                         Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
                         Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null'])
                     )
@@ -262,47 +264,69 @@ class Weather
 
         $all = json_decode($response, true);
 
-        if (!isset($all[$article - 1]))
-            Telegram::editMessageText([
-                'chat_id' => $user->chat_id,
-                'message_id' => $messageId,
-                'text' => '<strong> Can\'t find article by this number </strong>',
-                'parse_mode' => 'html',
-                'disable_notification' => true,
-                'reply_markup' => Keyboard::make()
-                    ->inline()
-                    ->row(
-                        Keyboard::inlineButton(['text' => 'To beginning', 'callback_data' => 'article 0 ' . $cat]),
-                        Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null'])
-                    )
-            ]);
-        else {
-            $art = $all[$article - 1];
+        $offset = ($page * 8) - 8;
 
-            Telegram::answerCallbackQuery([
-                'callback_query_id' => $callbackId
-            ]);
+        $weather = $all = array_slice($all, $offset, 8);
 
-            Telegram::editMessageText([
-                'chat_id' => $user->chat_id,
-                'message_id' => $messageId,
-                'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
-                    'By: <em>' . $art['source']['name'] . '</em>' . "\n" .
-                    'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
-                    $art['description'] . "\n" .
-                    '<a href="' . $art['url'] . '">More</a>' . "\n" .
-                    'Article ' . $article . ' of ' . count($all) .  "\n" . microtime(),
-                'parse_mode' => 'html',
-                'disable_notification' => true,
-                'reply_markup' => Keyboard::make()
-                    ->inline()
-                    ->row(
-                        ($article - 1 == 0 ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Previous', 'callback_data' => 'article ' . ($article - 1) . ' ' . $cat])),
-                        ($article + 1 > count($all) ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article ' . ($article + 1) . ' ' . $cat]))
-                    )
+        $text = '';
+
+        foreach ($weather as $entry) {
+            $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
+            $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->format('H:i A')) . ' ' . (gmp_sign($temp) == 1 ? '+' : '-') . $temp . ' ';
+            switch ($entry['weather']['description']) {
+                case 'clear sky':
+                    $text .= "\u{2600}";
+                    break;
+                case 'few clouds':
+                    $text .= "\u{1F324}";
+                    break;
+                case 'scattered clouds':
+                    $text .= "\u{1F325}";
+                    break;
+                case 'broken clouds':
+                    $text .= "\u{1F325}";
+                    break;
+                case 'shower rain':
+                    $text .= "\u{1F326}";
+                    break;
+                case 'rain':
+                    $text .= "\u{1F327}";
+                    break;
+                case 'thunderstorm':
+                    $text .= "\u{26C8}";
+                    break;
+                case 'snow':
+                    $text .= "\u{1F328}";
+                    break;
+                case 'mist':
+                    $text .= "\u{1F32B}";
+                    break;
+            }
+            $text .= ' ' . $entry['weather']['main'] . "\n";
+        }
+
+        Telegram::answerCallbackQuery([
+            'callback_query_id' => $callbackId
+        ]);
+
+        Telegram::editMessageText([
+            'chat_id' => $user->chat_id,
+            'message_id' => $messageId,
+            'text' => $text,
+            'parse_mode' => 'html',
+            'disable_notification' => true,
+            'reply_markup' => Keyboard::make()
+        ->inline()
+        ->row(
+            ($page == 1 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->format('d-m-Y') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->format('d-m-Y') . '<', 'callback_data' => 'weather 1'])),
+            ($page == 2 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(1)->format('d-m-Y') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(1)->format('d-m-Y') . '<', 'callback_data' => 'weather 2'])),
+            ($page == 3 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(2)->format('d-m-Y') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(2)->format('d-m-Y') . '<', 'callback_data' => 'weather 3'])),
+            ($page == 4 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(3)->format('d-m-Y') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(3)->format('d-m-Y') . '<', 'callback_data' => 'weather 4'])),
+            ($page == 5 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(4)->format('d-m-Y') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->addDays(4)->format('d-m-Y') . '<', 'callback_data' => 'weather 5']))
+        )
             ]);
             $user->update(['function' => null, 'function_state' => null]);
-        }
+
         return true;
     }
 
