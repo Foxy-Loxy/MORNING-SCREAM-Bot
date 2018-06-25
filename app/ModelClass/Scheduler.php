@@ -29,7 +29,7 @@ class Scheduler
         ]);
 
         $tmp = \App\Schedule::where('chat_id', $user->chat_id)->get();
-        if($tmp->isEmpty)
+        if($tmp->isEmpty())
             \App\Schedule::create([
                 'chat_id' => $user->chat_id
             ]);
