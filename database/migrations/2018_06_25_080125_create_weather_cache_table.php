@@ -8,7 +8,7 @@ class CreateWeatherCacheTable extends Migration
 
     public function up()
     {
-        Schema::create('Weather_Cache', function(Blueprint $table) {
+        Schema::create('weather_cache', function(Blueprint $table) {
             $table->string('location')->unique();
             $table->string('units');
             $table->json('content');
@@ -32,6 +32,6 @@ class CreateWeatherCacheTable extends Migration
     public function down()
     {
         \Illuminate\Support\Facades\DB::connection()->getpdo()->exec('DROP EVENT IF EXISTS ClearWeatherCache');
-        Schema::drop('Weather_Cache');
+        Schema::drop('weather_cache');
     }
 }

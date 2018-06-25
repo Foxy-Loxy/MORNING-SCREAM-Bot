@@ -8,7 +8,7 @@ class CreateNewsCacheTable extends Migration
 
     public function up()
     {
-        Schema::create('News_Cache', function (Blueprint $table) {
+        Schema::create('news_cache', function (Blueprint $table) {
             $table->string('category')->unique();
             $table->string('country')->nullable();
             $table->json('content');
@@ -33,6 +33,6 @@ class CreateNewsCacheTable extends Migration
     public function down()
     {
         \Illuminate\Support\Facades\DB::connection()->getpdo()->exec('DROP EVENT IF EXISTS ClearNewsCache');
-        Schema::drop('News_Cache');
+        Schema::drop('news_cache');
     }
 }

@@ -12,7 +12,7 @@ class WeatherCache extends Model
 {
 
     protected $fillable = [
-        'place', 'content'
+        'location', 'units', 'content'
     ];
 
     protected $table = 'weather_cache';
