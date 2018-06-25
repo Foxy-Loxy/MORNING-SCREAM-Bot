@@ -231,7 +231,7 @@ class Weather
                         'reply_markup' => Keyboard::make()
                             ->inline()
                             ->row(
-                                Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d/m'), 'callback_data' => 'null']),
+                                Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d/m') . '<', 'callback_data' => 'null']),
                                 Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDay()->format('d/m'), 'callback_data' => 'weather 2']),
                                 Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m'), 'callback_data' => 'weather 3']),
                                 Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m'), 'callback_data' => 'weather 4']),
@@ -246,7 +246,7 @@ class Weather
 
     static public function scrollMessage(User $user, int $messageId, int $callbackId, int $page)
         {
-                $cache = Weather::where('location', $user->weather->location)->where('units', $user->weather->units)->get();
+                $cache = \App\Weather::where('location', $user->weather->location)->where('units', $user->weather->units)->get();
                         if ($cache->isNotEmpty()) {
                                     $cache = $cache[0];
                                                 $response = $cache->content;
