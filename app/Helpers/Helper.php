@@ -11,6 +11,7 @@ namespace App\Helpers;
 use App\User;
 use \RecursiveIteratorIterator;
 use \RecursiveArrayIterator;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class Helper
 {
@@ -58,6 +59,10 @@ class Helper
     {
 
     }
+    
+    static public function sign( $number ) { 
+        return ( $number > 0 ) ? 1 : ( ( $number < 0 ) ? -1 : 0 ); 
+    } 
 
     static public function getCityAndCountryGoogle(string $coordinates)
     {
@@ -81,7 +86,7 @@ class Helper
 
         $found = false;
         $returnVal = '{CITY},{COUNTRY_CODE}';
-        foreach ($response['result'] as $result) {
+        foreach ($response['results'] as $result) {
             foreach ($result['address_components'] as $address) {
                 if ($address['types'] == ['locality', 'political'])
                     $returnVal = str_replace("{CITY}", $address['long_name'], $returnVal);
@@ -95,9 +100,9 @@ class Helper
             if ($found)
                 break;
         }
-        if ($found)
+        if ($found && (!strstr($returnVal, '{CITY}') && (!strstr($returnVal, '{COUNTRY_CODE}'))))
             return $returnVal;
         else
-            throw new \Exception('Can\'t find city and country');
+            throw new \Exception('Can\'t find city and country.');
     }
 }
