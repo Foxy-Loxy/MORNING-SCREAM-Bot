@@ -28,6 +28,12 @@ class Scheduler
             'function_state' => 'WAITING_FOR_TIME'
         ]);
 
+        $tmp = \App\Schedule::where('chat_id', $user->chat_id)->get();
+        if($tmp->isEmpty)
+            \App\Schedule::create([
+                'chat_id' => $user->chat_id
+            ]);
+
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
             'text' => 'Enter time you want to receive your daily delivery in format "HH:MM AM\PM". Notice that AM\PM is optional. If you want to specify time in 24-hour format, simply ignore AM\PM. Example: "13:50" OR "1:50 PM"',

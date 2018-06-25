@@ -26,7 +26,13 @@ class Weather
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
-        //Since only operation available for this service will be
+
+        $tmp = \App\Weather::where('chat_id', $user->chat_id)->get();
+        if($tmp->isEmpty)
+            \App\Weather::create([
+                'chat_id' => $user->chat_id
+            ]);
+
         $user->update([
             'function' => \App\Weather::NAME,
             'function_state' => 'WAITING_FOR_SETTING'
@@ -60,12 +66,6 @@ class Weather
         if ($user->function == \App\Weather::NAME && $user->function_state != null) {
 
             switch ($input) {
-            
-          	  $q = \App\Weather::where('chat_id', $user->chat_id)->get();
-          	  if($q->isEmpty)
-          			\App\Weather::create([
-          				'chat_id' => $user->chat_id
-          			]);
 
                 case "\u{274C} Cancel":
                     $user->update([

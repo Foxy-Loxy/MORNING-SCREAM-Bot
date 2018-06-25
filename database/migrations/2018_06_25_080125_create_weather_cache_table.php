@@ -10,7 +10,7 @@ class CreateWeatherCacheTable extends Migration
     {
         Schema::create('Weather_Cache', function(Blueprint $table) {
             $table->string('location')->unique();
-            $table->string('units')->default('metric');
+            $table->string('units');
             $table->json('content');
             $table->timestamps();
             // Schema declaration

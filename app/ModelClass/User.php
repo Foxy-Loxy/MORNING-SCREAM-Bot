@@ -29,6 +29,9 @@ class User
             'function' => \App\User::NAME,
             'function_state' => 'WAITING_FOR_SETTING_CATEGORY'
         ]);
+
+
+
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
             'text' => 'Your settings',

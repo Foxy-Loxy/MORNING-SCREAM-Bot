@@ -31,6 +31,13 @@ class News
             'function' => \App\News::NAME,
             'function_state' => 'WAITING_FOR_CATEGORY'
         ]);
+
+        $tmp = \App\News::where('chat_id', $user->chat_id)->get();
+        if($tmp->isEmpty)
+            \App\News::create([
+                'chat_id' => $user->chat_id
+            ]);
+
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
             'text' => 'Choose a category from listed on keyboard',
@@ -79,7 +86,6 @@ class News
                     if ($news->isEmpty())
                         $news = \App\News::create([
                             'chat_id' => $user->chat_id,
-                            'categories' => null
                         ]);
                     else
                         $news = $news[0];
