@@ -60,6 +60,12 @@ class Weather
         if ($user->function == \App\Weather::NAME && $user->function_state != null) {
 
             switch ($input) {
+            
+          	  $q = \App\Weather::where('chat_id', $user->chat_id)->get();
+          	  if($q->isEmpty)
+          			\App\Weather::create([
+          				'chat_id' => $user->chat_id
+          			]);
 
                 case "\u{274C} Cancel":
                     $user->update([

@@ -156,12 +156,13 @@ class WebhookController extends Controller
                             break;
 
                         case "\u{1F321} Set weather preferences":
-                            Telegram::sendMessage([
-                                'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => 'Not implemented for now',
-                                'parse_mode' => 'html',
-                                'reply_markup' => $menuKeyboard
-                            ]);
+                      		\App\ModelClass\Weather::scheduleCall($user);
+                            //Telegram::sendMessage([
+                            //    'chat_id' => $rqData['message']['chat']['id'],
+                            //    'text' => 'Not implemented for now',
+                            //    'parse_mode' => 'html',
+                            //    'reply_markup' => $menuKeyboard
+                            //]);
                             break;
 
                         case "\u{23F0} Set daily delivery time":
