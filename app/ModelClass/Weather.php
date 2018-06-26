@@ -51,6 +51,7 @@ class Weather
             'keyboard' => [
                 ["\u{1F321} Toggle between metric or imperial units"],
                 ["\u{1F30D} Set location to get weather"],
+                ['❌ Cancel']
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true

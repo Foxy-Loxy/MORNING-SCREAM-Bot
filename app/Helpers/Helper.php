@@ -55,9 +55,11 @@ class Helper
         return $resultArray;
     }
 
-    static public function createUserDefault(array $input)
+    static public function createUserDefault(string $chat_id)
     {
-
+		\App\Weather::create(['chat_id' => $chat_id]);
+		\App\Schedule::create(['chat_id' => $chat_id]);
+		\App\News::create(['chat_id' => $chat_id]);
     }
     
     static public function sign( $number ) { 

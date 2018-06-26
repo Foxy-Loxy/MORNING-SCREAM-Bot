@@ -61,7 +61,7 @@ class WebhookController extends Controller
         //
         // Register user if not identified
         //
-        if ($user->isEmpty())
+        if ($user->isEmpty()){
             $user = User::create([
                 'first_name' => $user_data['first_name'],
                 'last_name' => $user_data['last_name'],
@@ -71,6 +71,8 @@ class WebhookController extends Controller
                 'function' => null,
                 'function_args' => null,
             ]);
+            Helper::createUserDefault($user->chat_id);
+          }
         else
             $user = $user[0];
 

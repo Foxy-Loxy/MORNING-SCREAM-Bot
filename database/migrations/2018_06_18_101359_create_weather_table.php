@@ -17,9 +17,9 @@ class CreateWeatherTable extends Migration
                 ->on('users')
                 ->onDelete('cascade');
 
-            $table->string('lon')->nullable();
-            $table->string('lat')->nullable();
-            $table->string('location')->nullable();
+            $table->string('lon')->nullable()->default('0.1278');
+            $table->string('lat')->nullable()->default('51.5074');
+            $table->string('location')->nullable()->default('London,GB');
             $table->string('units')->default('metric');
             $table->timestamps();
         });

@@ -9,7 +9,7 @@ class CreateWeatherCacheTable extends Migration
     public function up()
     {
         Schema::create('weather_cache', function(Blueprint $table) {
-            $table->string('location')->unique();
+            $table->string('location');
             $table->string('units');
             $table->json('content');
             $table->timestamps();
