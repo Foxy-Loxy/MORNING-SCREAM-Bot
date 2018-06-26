@@ -47,8 +47,8 @@ class Kernel extends ConsoleKernel
                 $serviceArr = explode(',', $time->user->services);
                 if (in_array('news', $serviceArr) && $time->user->delivery_enabled == true)
                     News::deliver($time->user);
-//                if (in_array('weather', $serviceArr) && $time->user->delivery_enabled == true)
-//                    Weather::deliver($time->user);
+                if (in_array('weather', $serviceArr) && $time->user->delivery_enabled == true)
+                    Weather::deliver($time->user);
             }
         })->everyMinute();
     }
