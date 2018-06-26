@@ -19,7 +19,7 @@ class Users extends Migration
             $table->string('last_name')->nullable();
             $table->string('username')->nullable();
             $table->string('chat_id')->unique();
-            $table->string('services')->nullable();
+            $table->string('services')->default('weather,news');
             $table->string('function')->nullable();
             $table->string('function_state')->nullable();
             $table->boolean('delivery_enabled')->default(true);

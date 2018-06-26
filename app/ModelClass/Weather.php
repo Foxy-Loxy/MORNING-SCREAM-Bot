@@ -22,6 +22,7 @@ class Weather
             'keyboard' => [
                 ["\u{1F321} Toggle between metric or imperial units"],
                 ["\u{1F30D} Set location to get weather"],
+                ['❌ Cancel']
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -149,7 +150,7 @@ class Weather
     {
         $location = $user->weather->location;
         $response = '';
-        $cache = WeatherCache::where('location', $location)->get();
+        $cache = WeatherCache::where('location', $location)->where('units', $user->weather->units)->get();
         if ($cache->isNotEmpty()) {
             $cache = $cache[0];
             $response = $cache->content;
@@ -255,7 +256,7 @@ class Weather
             Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
-                'text' => '<strong> Can\'t find news for this date. Seems like they\'ve expired in cache. Use "Force Weather" command to get new instance of weather, or wait for your next daily delivery </strong>',
+                'text' => '<strong> Can\'t find weather for this date. Seems like they\'ve expired in cache. Use "Force Weather" command to get new instance of weather, or wait for your next daily delivery </strong>',
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
@@ -271,10 +272,7 @@ class Weather
             $user->update(['function' => null, 'function_state' => null]);
             return false;
         }
-//		Telegram::sendMessage([
-//			'chat_id' => $user->chat_id,
-//			'text' => print_r($response, true) . $user->weather->location . $user->weather->units . $cache->content . 'poi'
-//		]);
+
         $all = json_decode($response, true);
 
         $offset = ($page * 8) - 8;
