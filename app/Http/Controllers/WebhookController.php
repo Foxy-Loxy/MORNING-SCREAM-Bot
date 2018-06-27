@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Helpers\Helper;
+use App\Helpers\Localize;
 use App\News;
 use App\Schedule;
 use App\User;
@@ -39,16 +40,7 @@ class WebhookController extends Controller
         //
         // Prepare keyboard to be supplied
         //
-        $menuKeyboard = Keyboard::make([
-            'keyboard' => [
-                ["\u{1F4F0} Set news categories"],
-                ["\u{1F321} Set weather preferences"],
-                ["\u{23F0} Set daily delivery time"],
-                ["\u{1F527} See all account preferences", "\u{1F527} Set account preferences"]
-            ],
-            'resize_keyboard' => true,
-            'one_time_keyboard' => true
-        ]);
+
 
         //
         // Get all request data
@@ -82,6 +74,17 @@ class WebhookController extends Controller
           }
         else
             $user = $user[0];
+
+        $menuKeyboard = Keyboard::make([
+            'keyboard' => [
+                [Localize::getStringByLocale($user->lang, "main_newsKbd")],
+                [Localize::getStringByLocale($user->lang, "main_weatherKbd")],
+                [Localize::getStringByLocale($user->lang, "main_scheduleKbd")],
+                [Localize::getStringByLocale($user->lang, "main_summaryKbd"), Localize::getStringByLocale($user->lang, "main_settingsKbd")]
+            ],
+            'resize_keyboard' => true,
+            'one_time_keyboard' => true
+        ]);
 
         //
         // Determine data type given and perfom action
@@ -144,7 +147,7 @@ class WebhookController extends Controller
 				} catch (\Exception $e) {
 					Telegram::sendMessage([
               			'chat_id' => $user->chat_id,
-              			'text' => 'Unacceptable'
+              			'text' => Localize::getStringByLocale($user->lang, "main_wrongInput")
               		]);
 					return new JsonResponse('{ message:"ok" }', 200);
 				}
@@ -171,29 +174,23 @@ class WebhookController extends Controller
                     }
                 else
                     switch ($input) {
-                        case "\u{1F4F0} Set news categories":
+                        case Localize::getStringByLocale($user->lang, "main_newsKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => 'News'
+                                'text' => Localize::getStringByLocale($user->lang, "main_newsCommand")
                             ]);
                             \App\ModelClass\News::scheduleCall($user);
                             break;
 
-                        case "\u{1F321} Set weather preferences":
+                        case Localize::getStringByLocale($user->lang, "main_weatherKbd"):
                       		\App\ModelClass\Weather::scheduleCall($user);
-                            //Telegram::sendMessage([
-                            //    'chat_id' => $rqData['message']['chat']['id'],
-                            //    'text' => 'Not implemented for now',
-                            //    'parse_mode' => 'html',
-                            //    'reply_markup' => $menuKeyboard
-                            //]);
                             break;
 
-                        case "\u{23F0} Set daily delivery time":
+                        case Localize::getStringByLocale($user->lang, "main_scheduleKbd"):
 
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => 'Scheduling',
+                                'text' => Localize::getStringByLocale($user->lang, "main_scheduleCommand"),
                             ]);
                             \App\ModelClass\Scheduler::scheduleCall($user);
                             break;
@@ -204,7 +201,7 @@ class WebhookController extends Controller
                         case "Force Weather":
                             \App\ModelClass\Weather::deliver($user);
                             break;
-                        case "\u{1F527} See all account preferences":
+                        case Localize::getStringByLocale($user->lang, "main_summaryKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
                                 'text' => "ACCOUNT SUMMARY 	\n===============\nNews categories you've subscribed for: " . ($user->news != null ? $user->news->categories : 'None')
@@ -219,18 +216,18 @@ class WebhookController extends Controller
                             ]);
                             break;
 
-                        case "\u{1F527} Set account preferences":
+                        case Localize::getStringByLocale($user->lang, "main_settingsKbd"):
                             \App\ModelClass\User::scheduleCall($user);
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => 'Settings',
+                                'text' => Localize::getStringByLocale($user->lang, "main_settingsCommand"),
                             ]);
                             break;
 
                         default:
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => 'Hey, I\'m not a chatbot. Use commands listed below',
+                                'text' => Localize::getStringByLocale($user->lang, "main_noCommand"),
                                 'parse_mode' => 'html',
                                 'reply_markup' => $menuKeyboard
                             ]);

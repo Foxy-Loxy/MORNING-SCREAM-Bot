@@ -9,6 +9,7 @@
 namespace App\Helpers;
 
 use App\User;
+use Mockery\Exception;
 use \RecursiveIteratorIterator;
 use \RecursiveArrayIterator;
 use Telegram\Bot\Laravel\Facades\Telegram;
@@ -110,5 +111,9 @@ class Helper
             return $returnVal;
         else
             throw new \Exception('Can\'t find city and country.');
+    }
+
+    public static function throwException(string $message) {
+        throw new \Exception($message);
     }
 }

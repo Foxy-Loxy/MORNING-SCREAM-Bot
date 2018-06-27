@@ -1,0 +1,17 @@
+{
+  "lang" : "English",
+  "shortLang" : "us",
+
+  "main_noCommand" : "Hey, I'm not a chatbot. Use commands listed below",
+  "main_newsCommand" : "News",
+  "main_weatherCommand" : "Weather",
+  "main_settingsCommand" : "Settings",
+  "main_scheduleCommand" : "Schedule",
+  "main_wrongInput" : "Unacceptable",
+
+  "main_newsKbd" : "\\u{1F4F0} Set news categories",
+  "main_weatherKbd" : "\\u{1F321} Set weather preferences",
+  "main_settingsKbd" : "\\u{1F527} Set account preferences",
+  "main_summaryKbd" : "\\u{1F527} See all account preferences",
+  "main_scheduleKbd" : "\\u{23F0} Set daily delivery time"
+}

@@ -23,6 +23,7 @@ class Users extends Migration
             $table->string('function')->nullable();
             $table->string('function_state')->nullable();
             $table->boolean('delivery_enabled')->default(true);
+            $table->string('lang')->default('en');
             $table->timestamps();
         });
     }
