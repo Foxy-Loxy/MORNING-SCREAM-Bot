@@ -17,6 +17,13 @@ class WebhookController extends Controller
 
     public function trigger(Request $request)
     {
+		
+//		return new JsonResponse($request->all(), 200);
+		
+//		Telegram::sendMessage([
+//			'chat_id' => '189423549',
+//			'text' => print_r($request->all(), true)
+//		]);
 
         //
         // Listen to every exception and report it to developer
@@ -130,9 +137,17 @@ class WebhookController extends Controller
                 break;
 
             case  'message':
-                $data = $data['data'];
-                $input = (isset($data['text']) ? $data['text'] : $data['location']);
 
+                $data = $data['data'];
+				try {
+                $input = (isset($data['text']) ? $data['text'] : $data['location']);
+				} catch (\Exception $e) {
+					Telegram::sendMessage([
+              			'chat_id' => $user->chat_id,
+              			'text' => 'Unacceptable'
+              		]);
+					return new JsonResponse('{ message:"ok" }', 200);
+				}
                 //
                 // Determine whether any service is waiting for user action
                 //

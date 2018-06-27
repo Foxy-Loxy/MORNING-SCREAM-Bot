@@ -19,6 +19,10 @@ class Helper
 
     public static function getUserData(array $requestArray): array
     {
+//  	  Telegram::sendMessage([
+//  		  'chat_id' => '189423549',
+//  		  'text' => print_r($requestArray, true)
+//  	  ]);
         $resultArray = array();
         foreach (new RecursiveIteratorIterator(
                      new RecursiveArrayIterator($requestArray),
@@ -31,7 +35,7 @@ class Helper
                     continue;
                 $resultArray['chat_id'] = $array['id'];
                 $resultArray['first_name'] = $array['first_name'];
-                $resultArray['last_name'] = $array['last_name'];
+                $resultArray['last_name'] =(isset( $array['last_name']) ? $array['last_name'] : null);
                 $resultArray['username'] = (isset($array['username']) ? $array['username'] : null);
             }
         }

@@ -24,7 +24,7 @@ $router->get('/setwh', function () {
                 try{
                     Telegram::setWebhook([
                         'url' => 'https://my-sandbox.strangled.net/morning-scream/webhook',
-                        'certificate' => '/etc/ssl/certs/cert.pem'
+                        'certificate' => '/etc/ssl/certs/@cert.pem'
                     ]);
                 } catch(TelegramResponseException $e) {
                     Telegram::sendMessage([
