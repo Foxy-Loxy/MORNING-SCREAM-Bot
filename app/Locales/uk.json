@@ -18,11 +18,12 @@
   "summary_head": "ПІДСУМОК АККАУНТУ",
   "summary_newsCat": "Категорії новин на які Ви підписані: ",
   "summary_delivTime": "Час доставки: ",
+  "summary_donate": "Пожертвування",
+  "summary_credits": "Про бота",
 
   "none": "Відсутнє",
-  "donate": "Пожертвування",
-  "credits": "Про бота",
   "cancel": "\u274C Відміна",
+  "canceled" : "Повертаємося назад",
 
   "science": "Наука",
   "general": "Загальні",
@@ -30,5 +31,29 @@
   "technology": "Технології",
   "sports": "Спорт",
   "business": "Бізнес",
-  "entertainment": "Розваги"
+  "entertainment": "Розваги",
+
+  "news_cat_BusinessKbd" : "\uD83D\uDCB2 Бізнес",
+  "news_cat_EntertrainmentKbd" : "\uD83C\uDFB6 Зіркові новини",
+  "news_cat_HealthKbd" : "\uD83C\uDFE5 Здоров'я",
+  "news_cat_ScienceKbd" : "\uD83D\uDD2C Наука",
+  "news_cat_SprotsKbd" : "\u26BD Спорт",
+  "news_cat_TechnologyKbd" : "\uD83D\uDDA5 Технології",
+  "news_cat_GeneralKbd" : "\uD83D\uDCF0 Головне",
+
+  "news_choose" : "Виберіть категорію з наведених нижче",
+  "news_list" : "Список категорій на які Ви підписані: ",
+
+  "news_delivery_Delivery" : "<strong>Ваші щоденні новини тут !</strong> ",
+  "news_delivery_ZeroResults" : "<strong> Вибачте за незручності. Newsapi.org повернуло 0 новин для категорії: </strong>",
+  "news_delivery_By" : "Від: ",
+  "news_delivery_At" : "О: ",
+  "news_delivery_More" : "Більше",
+  "news_delivery_NewsNoBegin" : "Новина ",
+  "news_delivery_NewsNoEnd" : " із ",
+  "news_delivery_Prev" : "Попередня",
+  "news_delivery_Next" : "Наступна",
+  "news_delivery_CacheEmpty" : "<strong> Не можу знайти новини для цієї категорії. Здається вона зникла з кешу. Використуйте команду \"Force News\" щоб отримани останні новини, або чекайте до Вашої наступної щоденної доставки новин </strong>",
+  "news_delivery_NoPage" : "<strong> Не можу знайти новину за цією сторінкою </strong>",
+  "news_delivery_Beginning" : "У початок"
 }
