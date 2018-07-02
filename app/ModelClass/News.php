@@ -3,6 +3,7 @@
 
 namespace App\ModelClass;
 
+use App\Helpers\Localize;
 use App\NewsCache;
 use App\User;
 use Carbon\Carbon;
@@ -10,6 +11,7 @@ use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Exceptions;
 
+Localize::getStringByLocale($user->lang, '');
 
 class News
 {
@@ -18,10 +20,10 @@ class News
     {
         $catKeyboard = Keyboard::make([
             'keyboard' => [
-                ['🗠 Business', '🎶 Entertainment', '🏥 Health'],
-                ['🔬 Science', "\u{26BD} Sports", '🖥 Technology'],
-                ['📰 General'],
-                ['❌ Cancel']
+                [Localize::getStringByLocale($user->lang, 'news_cat_BusinessKbd'), Localize::getStringByLocale($user->lang, 'news_cat_EntertrainmentKbd'), Localize::getStringByLocale($user->lang, 'news_cat_HealthKbd')],
+                [Localize::getStringByLocale($user->lang, 'news_cat_ScienceKbd'), Localize::getStringByLocale($user->lang, 'news_cat_SportsKbd'), Localize::getStringByLocale($user->lang, 'news_cat_TechnologyKbd')],
+                [Localize::getStringByLocale($user->lang, 'news_cat_GeneralKbd')],
+                [Localize::getStringByLocale($user->lang, 'cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -40,7 +42,7 @@ class News
 
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => 'Choose a category from listed on keyboard',
+            'text' => Localize::getStringByLocale($user->lang, 'news_choose'),
             'reply_markup' => $catKeyboard
         ]);
     }
@@ -48,10 +50,12 @@ class News
     static public function scheduleConfirm(User $user, string $input, Keyboard $exitKbd)
     {
         $catKeyboard = Keyboard::make([
-            'keyboard' => [['🗠 Business', '🎶 Entertainment', '🏥 Health'],
-                ['🔬 Science', "\u{26BD} Sports", '🖥 Technology'],
-                ['📰 General'],
-                ['❌ Cancel']],
+            'keyboard' => [
+                [Localize::getStringByLocale($user->lang, 'news_cat_BusinessKbd'), Localize::getStringByLocale($user->lang, 'news_cat_EntertrainmentKbd'), Localize::getStringByLocale($user->lang, 'news_cat_HealthKbd')],
+                [Localize::getStringByLocale($user->lang, 'news_cat_ScienceKbd'), Localize::getStringByLocale($user->lang, 'news_cat_SportsKbd'), Localize::getStringByLocale($user->lang, 'news_cat_TechnologyKbd')],
+                [Localize::getStringByLocale($user->lang, 'news_cat_GeneralKbd')],
+                [Localize::getStringByLocale($user->lang, 'cancel')]
+            ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
@@ -65,14 +69,14 @@ class News
 
             switch ($input) {
 
-                case "\u{274C} Cancel":
+                case Localize::getStringByLocale($user->lang, 'cancel'):
                     $user->update([
                         'function' => null,
                         'function_state' => null
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'Canceled',
+                        'text' => Localize::getStringByLocale($user->lang, 'canceled'),
                         'reply_markup' => $exitKbd
                     ]);
                     return false;
@@ -95,7 +99,7 @@ class News
                     else
                         $catArr = explode(',', $news->categories);
                     switch ($input) {
-                        case "\u{1F5E0} Business":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_BusinessKbd'):
 
                             if (in_array('business', $catArr))
                                 unset($catArr[array_search('business', $catArr)]);
@@ -103,7 +107,7 @@ class News
                                 $catArr[] = 'business';
 
                             break;
-                        case "\u{1F3B6} Entertainment":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_EntertrainmentKbd'):
 
                             if (in_array('entertainment', $catArr))
                                 unset($catArr[array_search('entertrainment', $catArr)]);
@@ -111,7 +115,7 @@ class News
                                 $catArr[] = 'entertainment';
 
                             break;
-                        case "\u{1F3E5} Health":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_HealthKbd'):
 
                             if (in_array('health', $catArr))
                                 unset($catArr[array_search('health', $catArr)]);
@@ -119,21 +123,21 @@ class News
                                 $catArr[] = 'health';
 
                             break;
-                        case "\u{1F52C} Science":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_ScienceKbd'):
                             if (in_array('science', $catArr))
                                 unset($catArr[array_search('science', $catArr)]);
                             else
                                 $catArr[] = 'science';
 
                             break;
-                        case "\u{26BD} Sports":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_SportsKbd'):
                             if (in_array('sports', $catArr))
                                 unset($catArr[array_search('sports', $catArr)]);
                             else
                                 $catArr[] = 'sports';
 
                             break;
-                        case "\u{1F5A5} Technology":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_TechnologyKbd'):
 
                             if (in_array('technology', $catArr))
                                 unset($catArr[array_search('technology', $catArr)]);
@@ -141,7 +145,7 @@ class News
                                 $catArr[] = 'technology';
 
                             break;
-                        case "\u{1F4F0} General":
+                        case Localize::getStringByLocale($user->lang, 'news_cat_GeneralKbd'):
 
                             if (in_array('general', $catArr))
                                 unset($catArr[array_search('general', $catArr)]);
@@ -158,7 +162,7 @@ class News
                         $list .= ucfirst($cat) . ' | ';
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'List of themes you\'ve subscribed: ' . $user->news->FancyCategories(),
+                        'text' => Localize::getStringByLocale($user->lang, 'news_list') . $user->news->FancyCategories(),
                         'reply_markup' => $catKeyboard
                     ]);
 
@@ -184,7 +188,7 @@ class News
                     if ($i == 4) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => '<strong>Newsapi.org returned 0 news for category "' . ucfirst($category) . '". Sorry for incoveniece</strong>',
+                            'text' => Localize::getStringByLocale($user->lang, 'news_delivery_ZeroResults') . ucfirst($category),
                             'parse_mode' => 'html'
                         ]);
                         break;
@@ -209,7 +213,7 @@ class News
 
                 Telegram::sendMessage([
                     'chat_id' => $user->chat_id,
-                    'text' => '<strong>Your daily news are here !</strong> "' . ucfirst($category) . '"',
+                    'text' => Localize::getStringByLocale($user->lang, 'news_delivery_Delivery') . ucfirst($category),
                     'parse_mode' => 'html'
                 ]);
 				
@@ -218,18 +222,18 @@ class News
                 Telegram::sendMessage([
                     'chat_id' => $user->chat_id,
                     'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
-                        'By: <em>' . $art['source']['name'] . '</em>' . "\n" .
-                        'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
+                        Localize::getStringByLocale($user->lang, 'news_delivery_By') . '<em>' . $art['source']['name'] . '</em>' . "\n" .
+                        Localize::getStringByLocale($user->lang, 'news_delivery_At') . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
                         $art['description'] . "\n" .
-                        '<a href="' . $art['url'] . '">More</a>' . "\n" .
-                        'Article 1 of ' . count($all),
+                        '<a href="' . $art['url'] . '">'. Localize::getStringByLocale($user->lang, 'news_delivery_More') .'</a>' . "\n" .
+                        Localize::getStringByLocale($user->lang, 'news_delivery_NewsNoBegin') . '1' . Localize::getStringByLocale($user->lang, 'news_delivery_NewsNoEnd') . count($all),
                     'parse_mode' => 'html',
                     'disable_notification' => true,
                     'reply_markup' => Keyboard::make()
                         ->inline()
                         ->row(
                             Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']),
-                            Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article 2 ' . $category])
+                            Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, 'news_delivery_Next'), 'callback_data' => 'article 2 ' . $category])
                         )
                 ]);
                 }
@@ -249,7 +253,7 @@ class News
             Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
-                'text' => '<strong> Can\'t find news for this category. Seems like they\'ve expired in cache. Use "Force News" command to get new instance of news, or wait for your next daily delivery </strong>',
+                'text' => Localize::getStringByLocale($user->lang, 'news_delivery_CacheEmpty'),
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
@@ -269,13 +273,13 @@ class News
             Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
-                'text' => '<strong> Can\'t find article by this number </strong>',
+                'text' => Localize::getStringByLocale($user->lang, 'news_delivery_NoPage'),
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
                     ->inline()
                     ->row(
-                        Keyboard::inlineButton(['text' => 'To beginning', 'callback_data' => 'article 0 ' . $cat]),
+                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, 'news_delivery_Beginning'), 'callback_data' => 'article 0 ' . $cat]),
                         Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null'])
                     )
             ]);
@@ -289,19 +293,19 @@ class News
           Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
-                'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
-                    'By: <em>' . $art['source']['name'] . '</em>' . "\n" .
-                    'At: ' . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
-                    $art['description'] . "\n" .
-                    '<a href="' . $art['url'] . '">More</a>' . "\n" .
-                    'Article ' . $article . ' of ' . count($all) .  "\n" . microtime(),
+              'text' => '<strong>' . $art['title'] . '</strong>' . "\n" .
+                  Localize::getStringByLocale($user->lang, 'news_delivery_By') . '<em>' . $art['source']['name'] . '</em>' . "\n" .
+                  Localize::getStringByLocale($user->lang, 'news_delivery_At') . Carbon::parse($art['publishedAt'])->setTimezone($user->schedule->utc) . "\n" .
+                  $art['description'] . "\n" .
+                  '<a href="' . $art['url'] . '">'. Localize::getStringByLocale($user->lang, 'news_delivery_More') .'</a>' . "\n" .
+                  Localize::getStringByLocale($user->lang, 'news_delivery_NewsNoBegin') . $article . Localize::getStringByLocale($user->lang, 'news_delivery_NewsNoEnd') . count($all),
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
                     ->inline()
                     ->row(
-                        ($article - 1 == 0 ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Previous', 'callback_data' => 'article ' . ($article - 1) . ' ' . $cat])),
-                        ($article + 1 > count($all) ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => 'Next', 'callback_data' => 'article ' . ($article + 1) . ' ' . $cat]))
+                        ($article - 1 == 0 ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, 'news_delivery_Prev'), 'callback_data' => 'article ' . ($article - 1) . ' ' . $cat])),
+                        ($article + 1 > count($all) ? Keyboard::inlineButton(['text' => '-', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, 'news_delivery_Next'), 'callback_data' => 'article ' . ($article + 1) . ' ' . $cat]))
                     )
             ]);
             $user->update(['function' => null, 'function_state' => null]);

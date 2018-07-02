@@ -210,8 +210,8 @@ class WebhookController extends Controller
                                 'reply_markup' => Keyboard::make()
                                     ->inline()
                                     ->row(
-                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "credits"), 'callback_data' => 'credits']),
-                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "donate"), 'callback_data' => 'donate'])
+                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "summary_credits"), 'callback_data' => 'credits']),
+                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "summary_donate"), 'callback_data' => 'donate'])
                                     )
                             ]);
                             break;

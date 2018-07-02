@@ -18,11 +18,12 @@
   "summary_head": "ACCOUNT SUMMARY",
   "summary_newsCat": "News categories you've subscribed for: ",
   "summary_delivTime": "Delivery time: ",
+  "summary_donate": "Donate",
+  "summary_credits": "Credits",
 
   "none": "None",
-  "donate": "Donate",
-  "credits": "Credits",
   "cancel": "\u274C Cancel",
+  "canceled" : "Canceled",
 
   "science": "Science",
   "general": "General",
@@ -30,5 +31,30 @@
   "technology": "Technology",
   "sports": "Sports",
   "business": "Business",
-  "entertainment": "Entertainment"
+  "entertainment": "Entertainment",
+
+  "news_cat_BusinessKbd" : "\uD83D\uDCB2 Business",
+  "news_cat_EntertrainmentKbd" : "\uD83C\uDFB6 Entertrainment",
+  "news_cat_HealthKbd" : "\uD83C\uDFE5 Health",
+  "news_cat_ScienceKbd" : "\uD83D\uDD2C Science",
+  "news_cat_SprotsKbd" : "\u26BD Sports",
+  "news_cat_TechnologyKbd" : "\uD83D\uDDA5 Technology",
+  "news_cat_GeneralKbd" : "\uD83D\uDCF0 General",
+
+  "news_choose" : "Choose a category from listed on keyboard",
+  "news_list" : "List of themes you've subscribed: ",
+
+  "news_delivery_Delivery" : "<strong>Your daily news are here !</strong> ",
+  "news_delivery_ZeroResults" : "<strong> Sorry for incoveniece. Newsapi.org returned 0 news for category: </strong>",
+  "news_delivery_By" : "By: ",
+  "news_delivery_At" : "At: ",
+  "news_delivery_More" : "More",
+  "news_delivery_NewsNoBegin" : "Article ",
+  "news_delivery_NewsNoEnd" : " of ",
+  "news_delivery_Prev" : "Previous",
+  "news_delivery_Next" : "Next",
+  "news_delivery_CacheEmpty" : "<strong> Can't find news for this category. Seems like they've expired in cache. Use \"Force News\" command to get new instance of news, or wait for your next daily delivery </strong>",
+  "news_delivery_NoPage" : "<strong> Can't find article by this number </strong>",
+  "news_delivery_Beginning" : "To beginning"
+
 }
