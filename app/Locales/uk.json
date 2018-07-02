@@ -13,5 +13,22 @@
   "main_weatherKbd" : "\uD83C\uDF21 Встановити налаштування погоди",
   "main_settingsKbd" : "\uD83D\uDD27 Встановити налаштування акаунту",
   "main_summaryKbd" : "\u2699 Побачити підсумок усіх налаштувань",
-  "main_scheduleKbd" : "\u23F0 Встановити час щоденної доставки"
+  "main_scheduleKbd" : "\u23F0 Встановити час щоденної доставки",
+
+  "summary_head": "ПІДСУМОК АККАУНТУ",
+  "summary_newsCat": "Категорії новин на які Ви підписані: ",
+  "summary_delivTime": "Час доставки: ",
+
+  "none": "Відсутнє",
+  "donate": "Пожертвування",
+  "credits": "Про бота",
+  "cancel": "\u274C Відміна",
+
+  "science": "Наука",
+  "general": "Загальні",
+  "health": "Здоров'я",
+  "technology": "Технології",
+  "sports": "Спорт",
+  "business": "Бізнес",
+  "entertainment": "Розваги"
 }
