@@ -26,18 +26,18 @@
   "canceled" : "Повертаємося назад",
 
   "science": "Наука",
-  "general": "Загальні",
+  "general": "Головне",
   "health": "Здоров'я",
   "technology": "Технології",
   "sports": "Спорт",
   "business": "Бізнес",
-  "entertainment": "Розваги",
+  "entertainment": "Зіркові новини",
 
   "news_cat_BusinessKbd" : "\uD83D\uDCB2 Бізнес",
   "news_cat_EntertrainmentKbd" : "\uD83C\uDFB6 Зіркові новини",
   "news_cat_HealthKbd" : "\uD83C\uDFE5 Здоров'я",
   "news_cat_ScienceKbd" : "\uD83D\uDD2C Наука",
-  "news_cat_SprotsKbd" : "\u26BD Спорт",
+  "news_cat_SportsKbd" : "\u26BD Спорт",
   "news_cat_TechnologyKbd" : "\uD83D\uDDA5 Технології",
   "news_cat_GeneralKbd" : "\uD83D\uDCF0 Головне",
 

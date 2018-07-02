@@ -11,8 +11,6 @@ use Telegram\Bot\Keyboard\Keyboard;
 use Telegram\Bot\Laravel\Facades\Telegram;
 use Telegram\Bot\Exceptions;
 
-Localize::getStringByLocale($user->lang, '');
-
 class News
 {
 
@@ -157,9 +155,6 @@ class News
                     $news->update([
                         'categories' => implode(',', $catArr)
                     ]);
-                    $list = '';
-                    foreach ($catArr as $cat)
-                        $list .= ucfirst($cat) . ' | ';
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
                         'text' => Localize::getStringByLocale($user->lang, 'news_list') . $user->news->FancyCategories(),
@@ -188,7 +183,7 @@ class News
                     if ($i == 4) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => Localize::getStringByLocale($user->lang, 'news_delivery_ZeroResults') . ucfirst($category),
+                            'text' => Localize::getStringByLocale($user->lang, 'news_delivery_ZeroResults') . Localize::getStringByLocale($user->lang, $category),
                             'parse_mode' => 'html'
                         ]);
                         break;
@@ -213,7 +208,7 @@ class News
 
                 Telegram::sendMessage([
                     'chat_id' => $user->chat_id,
-                    'text' => Localize::getStringByLocale($user->lang, 'news_delivery_Delivery') . ucfirst($category),
+                    'text' => Localize::getStringByLocale($user->lang, 'news_delivery_Delivery') . Localize::getStringByLocale($user->lang, $category),
                     'parse_mode' => 'html'
                 ]);
 				
