@@ -114,16 +114,16 @@ class Weather
             switch ($user->function_state) {
 
                 case 'WAITING_FOR_LOCATION':
-                    if (!isset($input['latitude']))
-                        if (!isset($input['text'])) {
-                            Telegram::sendMessage([
-                                'chat_id' => $user->chat_id,
-                                'text' => 'Send me your location to set weather origin. It can be both geo-pin or location`s name',
-                                'reply_markup' => $canKeyboard
-                            ]);
-                            return false;
-                        } else
-                            $input = $input['text'];
+//                    if (!isset($input['latitude']))
+//                        if (!isset($input['text'])) {
+//                            Telegram::sendMessage([
+//                                'chat_id' => $user->chat_id,
+//                                'text' => 'Send me your location to set weather origin. It can be both geo-pin or location`s name ' . print_r($input, true),
+//                                'reply_markup' => $canKeyboard
+//                            ]);
+//                            return false;
+//                        } else
+//                            $input = $input['text'];
                     $weatherUser = \App\Weather::where('chat_id', $user->chat_id)->get()[0];
                     try {
                         $weatherUser->update([
@@ -141,7 +141,7 @@ class Weather
                     }
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'Successfully set location to ' . $weatherUser->location . ' by coordinates ' . $weatherUser->lat . ' , ' . $weatherUser->lon,
+                        'text' => 'Successfully set location to ' . $weatherUser->location,
                         'reply_markup' => $canKeyboard
                     ]);
                     break;

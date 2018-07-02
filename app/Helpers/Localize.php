@@ -12,6 +12,8 @@ namespace App\Helpers;
 class Localize
 {
         static public function getStringByLocale(string $loc, string $str){
+      		if (empty($str))
+      			return '';
             $locStr = $loc . '.' . $str;
             $args = explode('.', $locStr);
             $locale = ( isset($args[0]) ? $args[0] : Helper::throwException('Can\'t resolve locale name') );

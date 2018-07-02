@@ -22,8 +22,8 @@ class News extends Model
         return $this->belongsTo(User::class, 'chat_id', 'chat_id');
     }
 
-    public  function getCategoriesAttribute($value){
-        $cat = explode(',',$value);
+    public  function FancyCategories(){
+        $cat = explode(',',$this->categories);
         $translated = array();
         foreach ($cat as $item)
             $translated[] = ucfirst(Localize::getStringByLocale($this->user->lang, $item));

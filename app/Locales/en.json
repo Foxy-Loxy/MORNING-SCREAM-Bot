@@ -22,6 +22,14 @@
   "none" : "None",
   "donate" : "Donate",
   "credits" : "Credits",
-  "cancel" : "\u274C Cancel"
+  "cancel" : "\u274C Cancel",
+  
+    "science" : "Science",
+      "general" : "General",
+        "health" : "Health",
+          "technology" : "Technology",
+            "sports" : "Sports",
+              "business" : "Business",
+                "entertainment" : "Entertainment"
 
 }

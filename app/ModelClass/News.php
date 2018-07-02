@@ -105,10 +105,10 @@ class News
                             break;
                         case "\u{1F3B6} Entertainment":
 
-                            if (in_array('entertaiment', $catArr))
+                            if (in_array('entertainment', $catArr))
                                 unset($catArr[array_search('entertrainment', $catArr)]);
                             else
-                                $catArr[] = 'entertaiment';
+                                $catArr[] = 'entertainment';
 
                             break;
                         case "\u{1F3E5} Health":
@@ -158,7 +158,7 @@ class News
                         $list .= ucfirst($cat) . ' | ';
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'List of themes you\'ve subscribed: ' . $list,
+                        'text' => 'List of themes you\'ve subscribed: ' . $user->news->FancyCategories(),
                         'reply_markup' => $catKeyboard
                     ]);
 
