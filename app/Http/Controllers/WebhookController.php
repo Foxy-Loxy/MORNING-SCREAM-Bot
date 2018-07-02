@@ -204,14 +204,14 @@ class WebhookController extends Controller
                         case Localize::getStringByLocale($user->lang, "main_summaryKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => "ACCOUNT SUMMARY 	\n===============\nNews categories you've subscribed for: " . ($user->news != null ? $user->news->categories : 'None')
-                                    . "\n===============\nDelivery time: " . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : 'None') . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : 'None') . ' UTC)',
+                                'text' => Localize::getStringByLocale($user->lang, 'summary_head') . "\n===============\n". Localize::getStringByLocale($user->lang, 'summary_newsCat') . ($user->news != null ? $user->news->categories : Localize::getStringByLocale($user->lang, 'none'))
+                                    . "\n===============\n" . Localize::getStringByLocale($user->lang, 'summary_delivTime') . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : Localize::getStringByLocale($user->lang, 'none')) . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : Localize::getStringByLocale($user->lang, 'none')) . ' UTC)',
                                 'parse_mode' => 'html',
                                 'reply_markup' => Keyboard::make()
                                     ->inline()
                                     ->row(
-                                        Keyboard::inlineButton(['text' => 'Test', 'callback_data' => 'data']),
-                                        Keyboard::inlineButton(['text' => 'Btn 2', 'callback_data' => 'data_from_btn2'])
+                                        Keyboard::inlineButton(['text' => 'Credits', 'callback_data' => 'credits']),
+                                        Keyboard::inlineButton(['text' => 'Donate', 'callback_data' => 'donate'])
                                     )
                             ]);
                             break;

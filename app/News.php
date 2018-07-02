@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Helpers\Localize;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
@@ -19,6 +20,14 @@ class News extends Model
 
     public function user(){
         return $this->belongsTo(User::class, 'chat_id', 'chat_id');
+    }
+
+    public  function getCategoriesAttribute($value){
+        $cat = explode(',',$value);
+        $translated = array();
+        foreach ($cat as $item)
+            $translated[] = ucfirst(Localize::getStringByLocale($this->user->lang, $item));
+        return implode(' | ', $translated);
     }
 
 

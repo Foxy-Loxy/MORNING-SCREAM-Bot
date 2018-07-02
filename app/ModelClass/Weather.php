@@ -108,30 +108,33 @@ class Weather
                         'text' => 'Send me your location to set weather origin',
                         'reply_markup' => $canKeyboard
                     ]);
+                    return true;
                     break;
             }
             switch ($user->function_state) {
 
                 case 'WAITING_FOR_LOCATION':
-                    if (!isset($input['latitude'])) {
-                        Telegram::sendMessage([
-                            'chat_id' => $user->chat_id,
-                            'text' => 'Send me your location to set weather origin',
-                            'reply_markup' => $canKeyboard
-                        ]);
-                        return false;
-                    }
+                    if (!isset($input['latitude']))
+                        if (!isset($input['text'])) {
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => 'Send me your location to set weather origin. It can be both geo-pin or location`s name',
+                                'reply_markup' => $canKeyboard
+                            ]);
+                            return false;
+                        } else
+                            $input = $input['text'];
                     $weatherUser = \App\Weather::where('chat_id', $user->chat_id)->get()[0];
                     try {
                         $weatherUser->update([
-                            'lat' => $input['latitude'],
-                            'lon' => $input['longitude'],
-                            'location' => Helper::getCityAndCountryGoogle($input['latitude'] . ',' . $input['longitude'])
+                            'lat' => ( isset($input['latitude']) ? $input['latitude'] : null ),
+                            'lon' => ( isset($input['longitude']) ? $input['longitude'] : null ),
+                            'location' => Helper::getCityAndCountryGoogle($input)
                         ]);
                     } catch (\Exception $e) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => $e->getMessage() . ' Point place where there is any signs of civilization',
+                            'text' => 'Can\'t find city here',
                             'reply_markup' => $canKeyboard
                         ]);
                         return true;

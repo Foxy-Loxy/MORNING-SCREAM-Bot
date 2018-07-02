@@ -13,5 +13,15 @@
   "main_weatherKbd" : "\uD83C\uDF21 Set weather preferences",
   "main_settingsKbd" : "\uD83D\uDD27 Set account preferences",
   "main_summaryKbd" : "\u2699 See all account preferences",
-  "main_scheduleKbd" : "\u23F0 Set daily delivery time"
+  "main_scheduleKbd" : "\u23F0 Set daily delivery time",
+
+  "summary_head" : "ACCOUNT SUMMARY",
+  "summary_newsCat" : "News categories you've subscribed for: ",
+  "summary_delivTime" : "Delivery time: ",
+
+  "none" : "None",
+  "donate" : "Donate",
+  "credits" : "Credits",
+  "cancel" : "\u274C Cancel"
+
 }

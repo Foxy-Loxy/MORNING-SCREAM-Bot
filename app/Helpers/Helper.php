@@ -71,11 +71,18 @@ class Helper
         return ( $number > 0 ) ? 1 : ( ( $number < 0 ) ? -1 : 0 ); 
     } 
 
-    static public function getCityAndCountryGoogle(string $coordinates)
+    static public function getCityAndCountryGoogle($input)
     {
-        $endpoint = "https://maps.googleapis.com/maps/api/geocode/json?latlng={COORDINATES}&key={API_KEY}";
-        $endpoint = str_replace("{API_KEY}", env('GOOGLE_API_TOKEN'), $endpoint);
-        $endpoint = str_replace("{COORDINATES}", $coordinates, $endpoint);
+        $endpoint = '';
+        if (is_array($input)) {
+            $endpoint = "https://maps.googleapis.com/maps/api/geocode/json?latlng={COORDINATES}&key={API_KEY}";
+            $endpoint = str_replace("{API_KEY}", env('GOOGLE_API_TOKEN'), $endpoint);
+            $endpoint = str_replace("{COORDINATES}", $input['latitude'] . ',' . $input['longitude'], $endpoint);
+        } else {
+            $endpoint = "https://maps.googleapis.com/maps/api/geocode/json?address={ADDRESS}&key={API_KEY}";
+            $endpoint = str_replace("{API_KEY}", env('GOOGLE_API_TOKEN'), $endpoint);
+            $endpoint = str_replace("{ADDRESS}", $input, $endpoint);
+        }
 
         $curl = curl_init();
         curl_setopt_array($curl, [
