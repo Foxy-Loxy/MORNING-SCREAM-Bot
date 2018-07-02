@@ -17,11 +17,11 @@ class Localize
             $locale = ( isset($args[0]) ? $args[0] : Helper::throwException('Can\'t resolve locale name') );
             $string = ( isset($args[1]) ? $args[1] : Helper::throwException('Can\'t resolve string name') );
 
-            $json = json_decode(file_get_contents(base_path('/Locales/' . $locale . '.json')), true);
+            $json = json_decode(file_get_contents(base_path('app/Locales/' . $locale . '.json')), true);
             return $json[$string];
         }
 
         static public function getAllLocaleNames(){
-
+			
         }
 }
