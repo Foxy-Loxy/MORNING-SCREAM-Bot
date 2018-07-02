@@ -204,14 +204,14 @@ class WebhookController extends Controller
                         case Localize::getStringByLocale($user->lang, "main_summaryKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => Localize::getStringByLocale($user->lang, 'summary_head') . "\n===============\n". Localize::getStringByLocale($user->lang, 'summary_newsCat') . ($user->news != null ? $user->news->categories : Localize::getStringByLocale($user->lang, 'none'))
+                                'text' => Localize::getStringByLocale($user->lang, 'summary_head') . "\n===============\n". Localize::getStringByLocale($user->lang, 'summary_newsCat') . ($user->news != null ? $user->news->FancyCategories() : Localize::getStringByLocale($user->lang, 'none'))
                                     . "\n===============\n" . Localize::getStringByLocale($user->lang, 'summary_delivTime') . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : Localize::getStringByLocale($user->lang, 'none')) . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : Localize::getStringByLocale($user->lang, 'none')) . ' UTC)',
                                 'parse_mode' => 'html',
                                 'reply_markup' => Keyboard::make()
                                     ->inline()
                                     ->row(
-                                        Keyboard::inlineButton(['text' => 'Credits', 'callback_data' => 'credits']),
-                                        Keyboard::inlineButton(['text' => 'Donate', 'callback_data' => 'donate'])
+                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "credits"), 'callback_data' => 'credits']),
+                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "donate"), 'callback_data' => 'donate'])
                                     )
                             ]);
                             break;
