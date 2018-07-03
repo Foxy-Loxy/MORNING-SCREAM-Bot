@@ -55,6 +55,87 @@
   "news_delivery_Next" : "Next",
   "news_delivery_CacheEmpty" : "<strong> Can't find news for this category. Seems like they've expired in cache. Use \"Force News\" command to get new instance of news, or wait for your next daily delivery </strong>",
   "news_delivery_NoPage" : "<strong> Can't find article by this number </strong>",
-  "news_delivery_Beginning" : "To beginning"
+  "news_delivery_Beginning" : "To beginning",
+
+
+
+  "scheduler_menu_SetTZKbd" : "\uD83C\uDF10 Set time zone",
+  "scheduler_menu_SetTZ_Enter" : "Enter time you want to receive your daily delivery in format \"HH:MM AM\\PM\". Notice that AM\\PM is optional. If you want to specify time in 24-hour format, simply ignore AM\\PM. Example: \"13:50\" OR \"1:50 PM\"",
+  "scheduler_SetTZ_Success" : "Timezone was successfully set to ",
+  "scheduler_SetTZ_Fail" : "Invalid timezone format. Example: \"+3\" OR \"-6:30\"",
+
+  "scheduler_menu_SetDelivTime" : "\u23F0 Set time to deliver",
+  "scheduler_menu_SetDelivTime_Enter" : "Enter your current timezone in any standart manner. Example: \"UTC\", \"EEST\", \"+2:00\", \"-6\"",
+  "scheduler_SetDelivTime_Success" : "Delivery time is successfully set to: ",
+  "scheduler_SetDelivTime_Notice" : ". Notice that you current timezone is set to ",
+  "scheduler_SetDelivTime_Fail" : "Invalid time format. Example: \"13:50\" OR \"1:50 PM\"",
+
+  "weather_menu_Enter" : "Choose a setting from listed on keyboard",
+  "weather_menu_UnitToggleKbd" : "\uD83C\uDF21 Toggle between metric or imperial units",
+  "weather_menu_SetLocKbd" : "\uD83C\uDF0D Set location to get weather",
+  "weather_ToggleResult" : "Your preferred units now are set to ",
+  "weather_SetLoc_Request" : "Send me your location, or enter city name to set weather origin",
+  "weather_SetLoc_Success" : "Successfully set location to ",
+  "weather_SetLoc_Fail" : "Can't find city by this data",
+  "weather_SetLoc_TZ_Fail" : "Can't update timezone automatically here",
+  "weather_SetLoc_TZ_Success" : "Automatically updated your time zone, based on your location, to ",
+
+  "weather_delivery_Delivery" : "<strong>Your daily weather is here here !</strong> ",
+  "weather_delivery_CacheEmpty" : "<strong> Can't find weather for this date. Seems like they've expired in cache. Use \"Force Weather\" command to get new instance of weather, or wait for your next daily delivery </strong>",
+  "weather_delivery_ZeroResults" : "<strong> Sorry for incoveniece. OpenWeatherMap.org returned no weather for location </strong>",
+
+  "thunderstorm with light rain" :"\u26C8 Thunderstorm with light rain",
+  "thunderstorm with rain" :"\u26C8 Thunderstorm with rain",
+  "thunderstorm with heavy rain" :"\u26C8 Thunderstorm with heavy rain",
+  "light thunderstorm" :"\uD83C\uDF29 Light thunderstorm",
+  "thunderstorm" :"\uD83C\uDF29 Thunderstorm",
+  "heavy thunderstorm" :"\uD83C\uDF29 Heavy thunderstorm",
+  "ragged thunderstorm" :"\uD83C\uDF29 Ragged thunderstorm",
+  "thunderstorm with light drizzle" :"\u26C8 Thunderstorm with light drizzle",
+  "thunderstorm with drizzle" :"\u26C8 Thunderstorm with drizzle",
+  "thunderstorm with heavy drizzle" :"\u26C8 Thunderstorm with heavy drizzle",
+
+  "light rain" :"\uD83C\uDF27 Light rain",
+  "moderate rain" :"\uD83C\uDF27 Moderate rain",
+  "heavy intensity rain" :"\uD83C\uDF27 Heavy intensity rain",
+  "very heavy rain" : "\uD83C\uDF27 Very heavy rain",
+  "extreme rain" : "\uD83C\uDF27 Extreme rain",
+  "freezing rain" : "\uD83C\uDF27 Freezing rain",
+  "light intensity shower rain" :"\uD83C\uDF27 Light intensity shower rain",
+  "shower rain" :"\uD83C\uDF27 Shower rain",
+  "heavy intensity shower rain" :"\uD83C\uDF27 Heavy intensity shower rain",
+  "ragged shower rain" :"\uD83C\uDF27 Ragged shower rain",
+
+  "light snow" : "\uD83C\uDF28 Light snow",
+  "snow" : "\uD83C\uDF28 Snow",
+  "heavy snow" : "\uD83C\uDF28 Heavy snow",
+  "sleet" : "\uD83C\uDF28 Sleet",
+  "shower sleet" : "\uD83C\uDF28 Shower sleet",
+  "light rain and snow" : "\uD83C\uDF28 Light rain and snow",
+  "rain and snow" : "\uD83C\uDF28 Rain and snow",
+  "light shower snow" : "\uD83C\uDF28 Light shower snow",
+  "shower snow" : "\uD83C\uDF28 Shower snow",
+  "heavy shower snow" : "\uD83C\uDF28 Heavy shower snow",
+
+  "mist" :"\uD83C\uDF2B Mist",
+  "smoke" :"\uD83C\uDF2B Smoke",
+  "haze" :"\uD83C\uDF2B  Haze",
+  "sand, dust whirls" :"Sand, dust whirls",
+  "fog" :"\uD83C\uDF2B Fog",
+  "sand" :"\uD83C\uDF2B Sand",
+  "dust" :"\uD83C\uDF2B Dust",
+  "volcanic ash" :"\uD83C\uDF0B Volcanic ash",
+  "squalls" :"\uD83C\uDF2C Squalls",
+  "tornado" :"\uD83C\uDF2A Tornado",
+
+  "clear sky" : "\u2600 Clear sky",
+
+  "few clouds" : "\uD83C\uDF24 Few clouds",
+  "scattered clouds" : "\u26C5 Scattered clouds",
+  "broken clouds" : "\uD83C\uDF25 Broken clouds",
+  "overcast clouds" : "\u2601 Overcast clouds",
+
+  "metric" : "metric",
+  "imperial" : "imperial"
 
 }

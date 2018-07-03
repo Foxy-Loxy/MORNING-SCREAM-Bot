@@ -9,6 +9,7 @@
 namespace App\Helpers;
 
 use App\User;
+use Carbon\Carbon;
 use Mockery\Exception;
 use \RecursiveIteratorIterator;
 use \RecursiveArrayIterator;
@@ -100,6 +101,8 @@ class Helper
 
         $found = false;
         $returnVal = '{CITY},{COUNTRY_CODE}';
+        $returnArr = array();
+        $i = 0;
         foreach ($response['results'] as $result) {
             foreach ($result['address_components'] as $address) {
                 if ($address['types'] == ['locality', 'political'])
@@ -113,11 +116,46 @@ class Helper
             }
             if ($found)
                 break;
+            $i++;
         }
-        if ($found && (!strstr($returnVal, '{CITY}') && (!strstr($returnVal, '{COUNTRY_CODE}'))))
-            return $returnVal;
+        if ($found && (!strstr($returnVal, '{CITY}') && (!strstr($returnVal, '{COUNTRY_CODE}')))) {
+            $returnArr['location_string'] = $returnVal;
+            $returnArr['location_lat'] = $response['results'][$i]['geometry']['location']['lat'];
+            $returnArr['location_lon'] = $response['results'][$i]['geometry']['location']['lon'];
+            return $returnArr;
+        }
         else
             throw new \Exception('Can\'t find city and country.');
+    }
+
+    public static function getTimeZoneByCoordinatesGoogle($lat, $lon) {
+        $endpoint = "https://maps.googleapis.com/maps/api/timezone/json?location={LATITUDE},{LONGITUDE}&timestamp={TIMESTAMP}&key={API_KEY}";
+        $endpoint = str_replace("{API_KEY}", env('GOOGLE_TIMEZONE_API_TOKEN'), $endpoint);
+        $endpoint = str_replace("{LATITUDE}", $lat , $endpoint);
+        $endpoint = str_replace("{LONGITUDE}", $lon , $endpoint);
+        $endpoint = str_replace("{TIMESTAMP}", time() , $endpoint);
+
+        $curl = curl_init();
+        curl_setopt_array($curl, [
+            CURLOPT_RETURNTRANSFER => 1,
+            CURLOPT_URL => $endpoint,
+            CURLINFO_HEADER_OUT => 1,
+            CURLOPT_HTTPHEADER => [
+                'Accept:application/json',
+            ]
+        ]);
+
+        $response = curl_exec($curl);
+
+        $response = json_decode($response, true);
+
+        if (!isset($response['timeZoneId']))
+            self::throwException('Can\'t find timezone here');
+
+        $tz = Carbon::parse($response['timeZoneId'])->format('P');
+
+        return $tz;
+
     }
 
     public static function throwException(string $message) {
