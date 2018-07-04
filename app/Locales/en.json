@@ -64,7 +64,7 @@
   "scheduler_SetTZ_Success" : "Timezone was successfully set to ",
   "scheduler_SetTZ_Fail" : "Invalid timezone format. Example: \"+3\" OR \"-6:30\"",
 
-  "scheduler_menu_SetDelivTime" : "\u23F0 Set time to deliver",
+  "scheduler_menu_SetDelivTimeKbd" : "\u23F0 Set time to deliver",
   "scheduler_menu_SetDelivTime_Enter" : "Enter your current timezone in any standart manner. Example: \"UTC\", \"EEST\", \"+2:00\", \"-6\"",
   "scheduler_SetDelivTime_Success" : "Delivery time is successfully set to: ",
   "scheduler_SetDelivTime_Notice" : ". Notice that you current timezone is set to ",

@@ -15,10 +15,11 @@ class Scheduler
 {
     static public function scheduleCall(User $user)
     {
+        $locale = app(Localize::class);
         $schedKeyboard = Keyboard::make([
             'keyboard' => [
-                ["\u{1F310} Set time zone"],
-                ['❌ Cancel']
+                [$locale->getString('scheduler_menu_SetTZKbd')],
+                [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -31,17 +32,18 @@ class Scheduler
 
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => 'Enter time you want to receive your daily delivery in format "HH:MM AM\PM". Notice that AM\PM is optional. If you want to specify time in 24-hour format, simply ignore AM\PM. Example: "13:50" OR "1:50 PM"',
+            'text' => $locale->getString('scheduler_menu_SetTZ_Enter'),
             'reply_markup' => $schedKeyboard
         ]);
     }
 
     static public function scheduleConfirm(User $user, string $input, Keyboard $exitKbd)
     {
+        $locale = app(Localize::class);
         $schedKeyboard = Keyboard::make([
             'keyboard' => [
-                ["\u{1F310} Set time zone"],
-                ['❌ Cancel']
+                [$locale->getString('scheduler_menu_SetTZKbd')],
+                [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -49,8 +51,8 @@ class Scheduler
 
         $schedTZKeyboard = Keyboard::make([
             'keyboard' => [
-                ["\u{23F0} Set time to deliver"],
-                ['❌ Cancel']
+                [$locale->getString('scheduler_menu_SetDelivTimeKbd')],
+                [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -69,30 +71,30 @@ class Scheduler
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'Canceled',
+                        'text' => $locale->getString('canceled'),
                         'reply_markup' => $exitKbd
                     ]);
                     return false;
 
                     break;
-                case "\u{1F310} Set time zone":
+                case $locale->getString('scheduler_menu_SetTZKbd'):
                     $user->update([
                         'function_state' => 'WAITING_FOR_TIMEZONE'
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'Enter your current timezone in any standart manner. Example: "UTC", "EEST", "+2:00", "-6"',
+                        'text' => $locale->getString('scheduler_menu_SetTZ_Enter'),
                         'reply_markup' => $schedTZKeyboard
                     ]);
 					return true;
                     break;
-                case "\u{23F0} Set time to deliver":
+                case $locale->getString('scheduler_menu_SetDelivTimeKbd'):
                     $user->update([
                         'function_state' => 'WAITING_FOR_TIME'
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'Enter time you want to receive your daily delivery in format "HH:MM AM\PM". Notice that AM\PM is optional. If you want to specify time in 24-hour format, simply ignore AM\PM. Example: "13:50" OR "1:50 PM"',
+                        'text' => $locale->getString('scheduler_menu_SetDelivTime_Enter'),
                         'reply_markup' => $schedKeyboard
                     ]);
 					return true;
@@ -117,13 +119,13 @@ class Scheduler
                         ]);
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => 'Delivery time is successfully set to: ' . $time . ' . Notice that you current timezone is set to ' . $schedule->utc,
+                            'text' => $locale->getString('scheduler_SetDelivTime_Success') . $time . $locale->getString('scheduler_SetDelivTime_Notice') . $schedule->utc,
                             'reply_markup' => $schedKeyboard
                         ]);
                     } catch (\Exception $e) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => 'Invalid time format. Example: "13:50" OR "1:50 PM"',
+                            'text' => $locale->getString('scheduler_SetDelivTime_Fail'),
                             'reply_markup' => $schedKeyboard
                         ]);
                         return false;
@@ -140,13 +142,13 @@ class Scheduler
                             ]);
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => 'Timezone was successfully set to ' . $tz . ' UTC',
+                            'text' => $locale->getString('scheduler_SetTZ_Success') . $tz . ' UTC',
                             'reply_markup' => $schedTZKeyboard
                         ]);
                     } catch (\Exception $e) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => 'Invalid timezone format. Example: "+3" OR "-6:30"',
+                            'text' => $locale->getString('scheduler_SetTZ_Fail'),
                             'reply_markup' => $schedTZKeyboard
                         ]);
                         return false;

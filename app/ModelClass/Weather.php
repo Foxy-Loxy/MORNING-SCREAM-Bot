@@ -19,14 +19,15 @@ class Weather
 
     static public function scheduleCall(User $user)
     {
+        $locale = app(Localize::class);
         ///////////////////////////////////////////////////
-        //  Localize::getStringByLocale($user->lang, '') //
+        //  $locale->getString('') //
         ///////////////////////////////////////////////////
         $setKeyboard = Keyboard::make([
             'keyboard' => [
-                [Localize::getStringByLocale($user->lang, "weather_menu_UnitToggleKbd")],
-                [Localize::getStringByLocale($user->lang, "weather_menu_SetLocKbd")],
-                [Localize::getStringByLocale($user->lang, "cancel")]
+                [$locale->getString("weather_menu_UnitToggleKbd")],
+                [$locale->getString("weather_menu_SetLocKbd")],
+                [$locale->getString("cancel")]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -44,18 +45,19 @@ class Weather
         ]);
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => Localize::getStringByLocale($user->lang, "weather_menu_Enter"),
+            'text' => $locale->getString("weather_menu_Enter"),
             'reply_markup' => $setKeyboard
         ]);
     }
 
     static public function scheduleConfirm(User $user, $input, Keyboard $exitKbd)
     {
+        $locale = app(Localize::class);
         $setKeyboard = Keyboard::make([
             'keyboard' => [
-                [Localize::getStringByLocale($user->lang, "weather_menu_UnitToggleKbd")],
-                [Localize::getStringByLocale($user->lang, "weather_menu_SetLocKbd")],
-                [Localize::getStringByLocale($user->lang, "cancel")]
+                [$locale->getString("weather_menu_UnitToggleKbd")],
+                [$locale->getString("weather_menu_SetLocKbd")],
+                [$locale->getString("cancel")]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -63,7 +65,7 @@ class Weather
 
         $canKeyboard = Keyboard::make([
             'keyboard' => [
-                [Localize::getStringByLocale($user->lang, "cancel")]
+                [$locale->getString("cancel")]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -73,20 +75,20 @@ class Weather
 
             switch ($input) {
 
-                case Localize::getStringByLocale($user->lang, "cancel"):
+                case $locale->getString("cancel"):
                     $user->update([
                         'function' => null,
                         'function_state' => null
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => Localize::getStringByLocale($user->lang, "canceled"),
+                        'text' => $locale->getString("canceled"),
                         'reply_markup' => $exitKbd
                     ]);
                     return false;
                     break;
 
-                case Localize::getStringByLocale($user->lang, "weather_menu_UnitToggleKbd"):
+                case $locale->getString("weather_menu_UnitToggleKbd"):
                     $weather = \App\Weather::where('chat_id', $user->chat_id)->get()[0];
                     if ($weather->units == 'metric')
                         $weather->update([
@@ -98,18 +100,18 @@ class Weather
                         ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => Localize::getStringByLocale($user->lang, "weather_ToggleResult") . Localize::getStringByLocale($user->lang, $weather->units),
+                        'text' => $locale->getString("weather_ToggleResult") . $locale->getString($weather->units),
                         'reply_markup' => $setKeyboard
                     ]);
                     break;
 
-                case Localize::getStringByLocale($user->lang, "weather_menu_SetLocKbd"):
+                case $locale->getString("weather_menu_SetLocKbd"):
                     $user->update([
                         'function_state' => 'WAITING_FOR_LOCATION'
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => Localize::getStringByLocale($user->lang, "weather_SetLoc_Request"),
+                        'text' => $locale->getString("weather_SetLoc_Request"),
                         'reply_markup' => $canKeyboard
                     ]);
                     return true;
@@ -135,7 +137,7 @@ class Weather
                     } catch (\Exception $e) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => Localize::getStringByLocale($user->lang, "weather_SetLoc_Fail"),
+                            'text' => $locale->getString("weather_SetLoc_Fail"),
                             'reply_markup' => $canKeyboard
                         ]);
                         return true;
@@ -147,7 +149,7 @@ class Weather
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => Localize::getStringByLocale($user->lang, "weather_SetLoc_Success") . $weatherUser->location,
+                        'text' => $locale->getString("weather_SetLoc_Success") . $weatherUser->location,
                         'reply_markup' => $canKeyboard
                     ]);
                     try {
@@ -155,14 +157,14 @@ class Weather
                     } catch (\Exception $e) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
-                            'text' => Localize::getStringByLocale($user->lang, "weather_SetLoc_TZ_Fail"),
+                            'text' => $locale->getString("weather_SetLoc_TZ_Fail"),
                             'reply_markup' => $canKeyboard
                         ]);
                         return true;
                     }
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => Localize::getStringByLocale($user->lang, "weather_SetLoc_TZ_Success") . $tz,
+                        'text' => $locale->getString("weather_SetLoc_TZ_Success") . $tz,
                         'reply_markup' => $canKeyboard
                     ]);
                     $weatherUser->user->schedule->update([
@@ -177,6 +179,7 @@ class Weather
 
     static public function deliver(User $user)
     {
+        $locale = app(Localize::class);
         $location = $user->weather->location;
         $response = '';
         $cache = WeatherCache::where('location', $location)->where('units', $user->weather->units)->get();
@@ -189,7 +192,7 @@ class Weather
                 if ($i == 4) {
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => Localize::getStringByLocale($user->lang, "weather_delivery_ZeroResults") . ucfirst($location) ,
+                        'text' => $locale->getString("weather_delivery_ZeroResults") . ucfirst($location) ,
                         'parse_mode' => 'html'
                     ]);
                     break;
@@ -212,7 +215,7 @@ class Weather
             if (is_array($all)) {
                 Telegram::sendMessage([
                     'chat_id' => $user->chat_id,
-                    'text' => Localize::getStringByLocale($user->lang, "weather_delivery_Delivery") . $location,
+                    'text' => $locale->getString("weather_delivery_Delivery") . $location,
                     'parse_mode' => 'html'
                 ]);
 
@@ -221,7 +224,7 @@ class Weather
                 foreach ($all as $entry) {
                     $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
                     $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i A')) . ' ' . (Helper::sign($temp) == 1 ? '+' : '-') . $temp . ' ';
-                    $text .= ' ' . Localize::getStringByLocale($user->lang, $entry['weather'][0]['description']) . "\n";
+                    $text .= ' ' . $locale->getString($entry['weather'][0]['description']) . "\n";
                 }
 
                 Telegram::sendMessage([
@@ -247,6 +250,7 @@ class Weather
 
     static public function scrollMessage(User $user, int $messageId, int $callbackId, int $page)
     {
+        $locale = app(Localize::class);
         $cache = \App\WeatherCache::where('location', $user->weather->location)->where('units', $user->weather->units)->get();
         $response = '';
         if ($cache->isNotEmpty()) {
@@ -256,7 +260,7 @@ class Weather
             Telegram::editMessageText([
                 'chat_id' => $user->chat_id,
                 'message_id' => $messageId,
-                'text' => Localize::getStringByLocale($user->lang, "weather_delivery_CacheEmpty"),
+                'text' => $locale->getString("weather_delivery_CacheEmpty"),
                 'parse_mode' => 'html',
                 'disable_notification' => true,
                 'reply_markup' => Keyboard::make()
@@ -288,7 +292,7 @@ class Weather
 //          	  'chat_id' => $user->chat_id,
 //          	  'text' => print_r($entry['weather'][0]['description'], true)
 //            ]);
-            $text .= ' ' . Localize::getStringByLocale($user->lang, $entry['weather'][0]['description']) . "\n";
+            $text .= ' ' . $locale->getString($entry['weather'][0]['description']) . "\n";
         }
 
         Telegram::answerCallbackQuery([
@@ -319,6 +323,7 @@ class Weather
 
     static public function fetch($location, $units)
     {
+        $locale = app(Localize::class);
         $weather = WeatherCache::where('location', $location)->where('units', $units)->get();
         if ($weather->isEmpty()) {
             $endpoint = "http://api.openweathermap.org/data/2.5/forecast?q={LOCATION}&appid={API_KEY}&units={UNITS}";
