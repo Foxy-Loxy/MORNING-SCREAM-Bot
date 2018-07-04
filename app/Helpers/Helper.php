@@ -121,7 +121,7 @@ class Helper
         if ($found && (!strstr($returnVal, '{CITY}') && (!strstr($returnVal, '{COUNTRY_CODE}')))) {
             $returnArr['location_string'] = $returnVal;
             $returnArr['location_lat'] = $response['results'][$i]['geometry']['location']['lat'];
-            $returnArr['location_lon'] = $response['results'][$i]['geometry']['location']['lon'];
+            $returnArr['location_lon'] = $response['results'][$i]['geometry']['location']['lng'];
             return $returnArr;
         }
         else

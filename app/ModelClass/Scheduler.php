@@ -64,7 +64,7 @@ class Scheduler
 //			dd($user);
             switch ($input) {
 
-                case "\u{274C} Cancel":
+                case $locale->getString('cancel'):
                     $user->update([
                         'function' => null,
                         'function_state' => null
