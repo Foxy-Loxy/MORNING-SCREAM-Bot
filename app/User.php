@@ -14,7 +14,7 @@ class User extends Model
     const NAME = 'user';
 
     protected $fillable = [
-        'first_name', 'last_name', 'username', 'chat_id', 'services', 'function', 'function_state', 'delivery_enabled'
+        'first_name', 'last_name', 'username', 'chat_id', 'services', 'function', 'function_state', 'delivery_enabled', 'lang'
     ];
 
     public function news(){

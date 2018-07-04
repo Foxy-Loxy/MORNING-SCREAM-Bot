@@ -176,42 +176,46 @@ class User
 
                 case "WAITING_FOR_LANGUAGE":
                     $langArr = $locale->getAllLocales();
-                    $kbdArr = [ $locale->getString('cancel') ];
+                    $kbdArr = array();
                     foreach ($langArr as $lang)
-                        $kbdArr[] = strtoupper($lang['short']) . ' | ' . $lang['full'];
-                    $langKbd = Keyboard::make([
-                        $kbdArr
-                    ]);
+                        $kbdArr[] = array(strtoupper($lang['short']) . ' | ' . $lang['full']);
+                    $langKbd = $kbdArr;
                     $exploded = explode(' | ', $input);
                     $short = strtolower($exploded[0]);
-                    $long = $exploded[1];
+                    $long = (isset($exploded[1]) ? $exploded[1] : 'null');
                     $found = false;
-                    foreach ($langArr as $lang)
+                    foreach ($langArr as $lang){
                         if ($lang['short'] == $short && $short != $locale->current) {
                             $user->update([
                                 'lang' => $short
                             ]);
                         $locale->setLocale($short);
-                        array_unshift($langKbd, $locale->getString('cancel'));
+                        array_unshift($kbdArr, [$locale->getString('cancel')]);
+                      		$Kbd = Keyboard::make([
+                      		    'keyboard' => $kbdArr,
+          						'resize_keyboard' => true,
+          						'one_time_keyboard' => true
+                  			]);
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
                             'text' => $locale->getString('user_SetLang_Success') . $long,
-                            'reply_markup' => $langKbd
+                            'reply_markup' => $Kbd
                         ]);
-                        } else {
-                            array_unshift($langKbd, $locale->getString('cancel'));
-                            Telegram::sendMessage([
-                                'chat_id' => $user->chat_id,
-                                'text' => $locale->getString('user_SetLang_Fail') . $long,
-                                'reply_markup' => $langKbd
-                            ]);
+                        return true;
                         }
-
-
-
-
+                    }
+                    array_unshift($kbdArr, [$locale->getString('cancel')]);
+              		$Kbd = Keyboard::make([
+	        		    'keyboard' => $kbdArr,
+          				'resize_keyboard' => true,
+          				'one_time_keyboard' => true
+                  	]);                            
+                    Telegram::sendMessage([
+                  		'chat_id' => $user->chat_id,
+                  		'text' => $locale->getString('user_SetLang_Fail'),
+                  		'reply_markup' => $Kbd
+                    ]);
                     break;
-
             }
         }
         return true;

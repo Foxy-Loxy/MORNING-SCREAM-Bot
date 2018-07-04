@@ -21,7 +21,7 @@ class Localize
         } catch (\Exception $e) {
             $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/en.json')), true);
         }
-        $this->current = $this->locale_strings['short'];
+        $this->current = $this->locale_strings['shortLang'];
     }
 
     public function getString(string $str)
@@ -39,7 +39,7 @@ class Localize
         $result = array();
         foreach ($localeArr as $locale) {
             try {
-                $data = json_decode(file_get_contents(base_path('app/Locales/' . $locale . '.json')), true);
+                $data = json_decode(file_get_contents(base_path('app/Locales/' . $locale)), true);
                 if ($data != null) {
                     $tmp = array();
                     $tmp['short'] = $data['shortLang'];
@@ -49,8 +49,9 @@ class Localize
             } catch (\Exception $e) {
                 continue;
             }
-            return $result;
+
         }
+        return $result;
     }
 
     public function setLocale(string $locale){
@@ -59,6 +60,6 @@ class Localize
         } catch (\Exception $e) {
             $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/en.json')), true);
         }
-        $this->current = $this->locale_strings['short'];
+        $this->current = $this->locale_strings['shortLang'];
     }
 }
