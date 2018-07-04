@@ -117,10 +117,19 @@ class User
                             $user->update([
                                 'function_state' => 'WAITING_FOR_LANGUAGE'
                             ]);
+                            $langArr = $locale->getAllLocales();
+                            $kbdArr = array();
+                            foreach ($langArr as $lang)
+                                $kbdArr[] = array(strtoupper($lang['short']) . ' | ' . $lang['full']);
+                            $Kbd = Keyboard::make([
+                                'keyboard' => $kbdArr,
+                                'resize_keyboard' => true,
+                                'one_time_keyboard' => true
+                            ]);
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
                                 'text' => $locale->getString("user_SetLang_Enter"),
-                                'reply_markup' => $servKeyboard
+                                'reply_markup' => $Kbd
                             ]);
                             break;
 
