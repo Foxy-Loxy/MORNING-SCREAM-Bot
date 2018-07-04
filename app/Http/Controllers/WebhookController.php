@@ -74,13 +74,22 @@ class WebhookController extends Controller
           }
         else
             $user = $user[0];
+        
+        //load user locale
 
+
+        app()->singleton(Localize::class, function () use ($user) {
+            return new Localize($user->lang);
+        });
+
+        $locale = new Localize($user->lang);
+        
         $menuKeyboard = Keyboard::make([
             'keyboard' => [
-                [Localize::getStringByLocale($user->lang, "main_newsKbd")],
-                [Localize::getStringByLocale($user->lang, "main_weatherKbd")],
-                [Localize::getStringByLocale($user->lang, "main_scheduleKbd")],
-                [Localize::getStringByLocale($user->lang, "main_summaryKbd"), Localize::getStringByLocale($user->lang, "main_settingsKbd")]
+                [$locale->getString("main_newsKbd")],
+                [$locale->getString("main_weatherKbd")],
+                [$locale->getString("main_scheduleKbd")],
+                [$locale->getString("main_summaryKbd"), $locale->getString("main_settingsKbd")]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -147,7 +156,7 @@ class WebhookController extends Controller
 				} catch (\Exception $e) {
 					Telegram::sendMessage([
               			'chat_id' => $user->chat_id,
-              			'text' => Localize::getStringByLocale($user->lang, "main_wrongInput")
+              			'text' => $locale->getString("main_wrongInput")
               		]);
 					return new JsonResponse('{ message:"ok" }', 200);
 				}
@@ -174,23 +183,23 @@ class WebhookController extends Controller
                     }
                 else
                     switch ($input) {
-                        case Localize::getStringByLocale($user->lang, "main_newsKbd"):
+                        case $locale->getString("main_newsKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => Localize::getStringByLocale($user->lang, "main_newsCommand")
+                                'text' => $locale->getString("main_newsCommand")
                             ]);
                             \App\ModelClass\News::scheduleCall($user);
                             break;
 
-                        case Localize::getStringByLocale($user->lang, "main_weatherKbd"):
+                        case $locale->getString("main_weatherKbd"):
                       		\App\ModelClass\Weather::scheduleCall($user);
                             break;
 
-                        case Localize::getStringByLocale($user->lang, "main_scheduleKbd"):
+                        case $locale->getString("main_scheduleKbd"):
 
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => Localize::getStringByLocale($user->lang, "main_scheduleCommand"),
+                                'text' => $locale->getString("main_scheduleCommand"),
                             ]);
                             \App\ModelClass\Scheduler::scheduleCall($user);
                             break;
@@ -201,33 +210,33 @@ class WebhookController extends Controller
                         case "Force Weather":
                             \App\ModelClass\Weather::deliver($user);
                             break;
-                        case Localize::getStringByLocale($user->lang, "main_summaryKbd"):
+                        case $locale->getString("main_summaryKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => Localize::getStringByLocale($user->lang, 'summary_head') . "\n===============\n". Localize::getStringByLocale($user->lang, 'summary_newsCat') . ($user->news != null ? $user->news->FancyCategories() : Localize::getStringByLocale($user->lang, 'none'))
-                                    . "\n===============\n" . Localize::getStringByLocale($user->lang, 'summary_delivTime') . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : Localize::getStringByLocale($user->lang, 'none')) . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : Localize::getStringByLocale($user->lang, 'none')) . ' UTC)',
+                                'text' => $locale->getString('summary_head') . "\n===============\n". $locale->getString('summary_newsCat') . ($user->news != null ? $user->news->FancyCategories() : $locale->getString('none'))
+                                    . "\n===============\n" . $locale->getString('summary_delivTime') . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : $locale->getString('none')) . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : $locale->getString('none')) . ' UTC)',
                                 'parse_mode' => 'html',
                                 'reply_markup' => Keyboard::make()
                                     ->inline()
                                     ->row(
-                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "summary_credits"), 'callback_data' => 'credits']),
-                                        Keyboard::inlineButton(['text' => Localize::getStringByLocale($user->lang, "summary_donate"), 'callback_data' => 'donate'])
+                                        Keyboard::inlineButton(['text' => $locale->getString("summary_credits"), 'callback_data' => 'credits']),
+                                        Keyboard::inlineButton(['text' => $locale->getString("summary_donate"), 'callback_data' => 'donate'])
                                     )
                             ]);
                             break;
 
-                        case Localize::getStringByLocale($user->lang, "main_settingsKbd"):
+                        case $locale->getString("main_settingsKbd"):
                             \App\ModelClass\User::scheduleCall($user);
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => Localize::getStringByLocale($user->lang, "main_settingsCommand"),
+                                'text' => $locale->getString("main_settingsCommand"),
                             ]);
                             break;
 
                         default:
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => Localize::getStringByLocale($user->lang, "main_noCommand"),
+                                'text' => $locale->getString("main_noCommand"),
                                 'parse_mode' => 'html',
                                 'reply_markup' => $menuKeyboard
                             ]);

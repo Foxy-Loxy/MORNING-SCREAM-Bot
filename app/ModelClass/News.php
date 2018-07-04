@@ -14,7 +14,7 @@ use Telegram\Bot\Exceptions;
 class News
 {
 
-    static public function scheduleCall(User $user)
+    static public function scheduleCall(User $user, Localize $locale)
     {
         $catKeyboard = Keyboard::make([
             'keyboard' => [

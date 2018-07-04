@@ -11,19 +11,43 @@ namespace App\Helpers;
 
 class Localize
 {
-        static public function getStringByLocale(string $loc, string $str){
-      		if (empty($str))
-      			return '';
-            $locStr = $loc . '.' . $str;
-            $args = explode('.', $locStr);
-            $locale = ( isset($args[0]) ? $args[0] : Helper::throwException('Can\'t resolve locale name') );
-            $string = ( isset($args[1]) ? $args[1] : Helper::throwException('Can\'t resolve string name') );
 
-            $json = json_decode(file_get_contents(base_path('app/Locales/' . $locale . '.json')), true);
-            return $json[$string];
-        }
+    private $locale_strings;
 
-        static public function getAllLocaleNames(){
-			
+    public function __construct(string $locale) {
+        try {
+            $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/' . $locale . '.json')), true);
+        } catch (\Exception $e) {
+            $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/en.json')), true);
         }
+    }
+
+    public function getString(string $str)
+    {
+        if (empty($str))
+            return '';
+        if (!isset($this->locale_strings[$str]))
+            return $str;
+        return $this->locale_strings[$str];
+    }
+
+    public function getAllLocales()
+    {
+        $localeArr = array_diff(scandir(base_path('app/Locales')), array('..', '.'));
+        $result = array();
+        foreach ($localeArr as $locale) {
+            try {
+                $data = json_decode(file_get_contents(base_path('app/Locales/' . $locale . '.json')), true);
+                if ($data != null) {
+                    $tmp = array();
+                    $tmp['short'] = $data['shortLang'];
+                    $tmp['full'] = $data['lang'];
+                    $result[] = $tmp;
+                }
+            } catch (\Exception $e) {
+                continue;
+            }
+            return $result;
+        }
+    }
 }

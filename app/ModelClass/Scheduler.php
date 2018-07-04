@@ -3,6 +3,7 @@
 
 namespace App\ModelClass;
 
+use App\Helpers\Localize;
 use App\Schedule;
 use App\User;
 use Telegram\Bot\Keyboard\Keyboard;
