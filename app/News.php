@@ -23,10 +23,11 @@ class News extends Model
     }
 
     public  function FancyCategories(){
+  		$locale = app(Localize::class);
         $cat = explode(',',$this->categories);
         $translated = array();
         foreach ($cat as $item)
-            $translated[] = ucfirst(Localize::getStringByLocale($this->user->lang, $item));
+            $translated[] = ucfirst($locale->getString($item));
         return implode(' | ', $translated);
     }
 
