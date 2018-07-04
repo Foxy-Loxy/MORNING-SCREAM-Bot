@@ -29,4 +29,13 @@ class User extends Model
         return $this->hasOne(\App\Schedule::class, 'chat_id', 'chat_id');
     }
 
+    public  function FancyServices(){
+        $locale = app(Localize::class);
+        $cat = explode(',',$this->services);
+        $translated = array();
+        foreach ($cat as $item)
+            $translated[] = ucfirst($locale->getString($item));
+        return implode(' | ', $translated);
+    }
+
 }

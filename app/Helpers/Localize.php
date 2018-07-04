@@ -13,6 +13,7 @@ class Localize
 {
 
     private $locale_strings;
+    public $current;
 
     public function __construct(string $locale) {
         try {
@@ -20,6 +21,7 @@ class Localize
         } catch (\Exception $e) {
             $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/en.json')), true);
         }
+        $this->current = $this->locale_strings['short'];
     }
 
     public function getString(string $str)
@@ -49,5 +51,14 @@ class Localize
             }
             return $result;
         }
+    }
+
+    public function setLocale(string $locale){
+        try {
+            $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/' . $locale . '.json')), true);
+        } catch (\Exception $e) {
+            $this->locale_strings = json_decode(file_get_contents(base_path('app/Locales/en.json')), true);
+        }
+        $this->current = $this->locale_strings['short'];
     }
 }

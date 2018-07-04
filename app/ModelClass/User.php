@@ -3,6 +3,7 @@
 
 namespace App\ModelClass;
 
+use App\Helpers\Localize;
 use App\NewsCache;
 use Carbon\Carbon;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -15,11 +16,13 @@ class User
 
     static public function scheduleCall(\App\User $user)
     {
+        $locale = app(Localize::class);
         $catKeyboard = Keyboard::make([
             'keyboard' => [
-                ["\u{1F4EE} Set services enabled to deliver"],
-                ["\u{1F579} Toggle delivering status"],
-                ['❌ Cancel']
+                [$locale->getString("user_menu_ServicesKbd")],
+                [$locale->getString("user_menu_ToggleDelivKbd")],
+                [$locale->getString("user_menu_SetLangKbd")],
+                [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -31,7 +34,6 @@ class User
         ]);
 
 
-
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
             'text' => 'Your settings',
@@ -41,11 +43,12 @@ class User
 
     static public function scheduleConfirm(\App\User $user, string $input, Keyboard $exitKbd)
     {
+        $locale = app(Localize::class);
         $servKeyboard = Keyboard::make([
             'keyboard' => [
-                ["\u{1F4F0} News"],
-                ["\u{2600} Weather"],
-                ['❌ Cancel']
+                [$locale->getString("user_Services_NewsKbd")],
+                [$locale->getString("user_Services_WeatherKbd")],
+                [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -53,26 +56,29 @@ class User
 
         $catKeyboard = Keyboard::make([
             'keyboard' => [
-                ["\u{1F4EE} Set services enabled to deliver"],
-                ["\u{1F579} Toggle delivering status"],
-                ['❌ Cancel']
+                [$locale->getString("user_menu_ServicesKbd")],
+                [$locale->getString("user_menu_ToggleDelivKbd")],
+                [$locale->getString("user_menu_SetLangKbd")],
+                [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
 
+        $calKeyboard = Keyboard::make(['❌ Cancel']);
+
         if ($user->function == \App\User::NAME && $user->function_state != null) {
 
             switch ($input) {
 
-                case "\u{274C} Cancel":
+                case $locale->getString('cancel'):
                     $user->update([
                         'function' => null,
                         'function_state' => null
                     ]);
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'Canceled',
+                        'text' => $locale->getString('canceled'),
                         'reply_markup' => $exitKbd
                     ]);
                     return false;
@@ -84,45 +90,44 @@ class User
 
                     switch ($input) {
 
-                        case "\u{1F4EE} Set services enabled to deliver":
+                        case $locale->getString("user_menu_ServicesKbd"):
                             $user->update([
                                 'function_state' => 'WAITING_FOR_SERVICES'
                             ]);
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => 'Select services listed below to toggle them for delivering',
+                                'text' => $locale->getString("user_Services_Enter"),
                                 'reply_markup' => $servKeyboard
                             ]);
                             break;
 
-                        case "\u{1F579} Toggle delivering status":
-                        $user->update([
-                      	  'delivery_enabled' => !$user->delivery_enabled
-                        ]);
-                                                    Telegram::sendMessage([
-                                'chat_id' => $user->chat_id,
-                                'text' => 'Delivery now is ' . ($user->delivery_enabled ? 'enabled' : 'disabled'),
-                                'reply_markup' => $catKeyboard
-                            ]);
-                            break;
-                        
-                        
-                        
+                        case $locale->getString("user_Services_Enter"):
                             $user->update([
                                 'delivery_enabled' => !$user->delivery_enabled
                             ]);
-
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => 'Delivery now is ' . ($user->delivery_enabled ? 'enabled' : 'disabled'),
+                                'text' => $locale->getString("user_ToggleDelivKbd_Body") . ($user->delivery_enabled ? $locale->getString("user_ToggleDelivKbd_Body_Enabled") : $locale->getString("user_ToggleDelivKbd_Body_Disabled")),
                                 'reply_markup' => $catKeyboard
+                            ]);
+                            break;
+
+
+                        case $locale->getString("user_menu_SetLangKbd"):
+                            $user->update([
+                                'function_state' => 'WAITING_FOR_LANGUAGE'
+                            ]);
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString("user_SetLang_Enter"),
+                                'reply_markup' => $servKeyboard
                             ]);
                             break;
 
                         default:
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => 'Choose setting from list below',
+                                'text' => $locale->getString("user_menu_Fail"),
                                 'reply_markup' => $catKeyboard
                             ]);
                             break;
@@ -134,14 +139,14 @@ class User
                     $serArr = explode(',', ($user->services == null ? "" : $user->services));
 
                     switch ($input) {
-                        case "\u{1F4F0} News":
+                        case $locale->getString("user_Services_NewsKbd"):
                             if (in_array('news', $serArr))
                                 unset($serArr[array_search('news', $serArr)]);
                             else
                                 $serArr[] = 'news';
                             break;
 
-                        case "\u{2600} Weather":
+                        case $locale->getString("user_Services_WeatherKbd"):
                             if (in_array('weather', $serArr))
                                 unset($serArr[array_search('weather', $serArr)]);
                             else
@@ -151,7 +156,7 @@ class User
                         default:
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => 'Choose service from list below',
+                                'text' => $locale->getString("user_Services_Fail"),
                                 'reply_markup' => $servKeyboard
                             ]);
                             break;
@@ -164,9 +169,47 @@ class User
                         $list .= ucfirst($ser) . ' | ';
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => 'List of services enabled: ' . $list,
+                        'text' => $locale->getString("user_Services_List") . $list,
                         'reply_markup' => $servKeyboard
                     ]);
+                    break;
+
+                case "WAITING_FOR_LANGUAGE":
+                    $langArr = $locale->getAllLocales();
+                    $kbdArr = [ $locale->getString('cancel') ];
+                    foreach ($langArr as $lang)
+                        $kbdArr[] = strtoupper($lang['short']) . ' | ' . $lang['full'];
+                    $langKbd = Keyboard::make([
+                        $kbdArr
+                    ]);
+                    $exploded = explode(' | ', $input);
+                    $short = strtolower($exploded[0]);
+                    $long = $exploded[1];
+                    $found = false;
+                    foreach ($langArr as $lang)
+                        if ($lang['short'] == $short && $short != $locale->current) {
+                            $user->update([
+                                'lang' => $short
+                            ]);
+                        $locale->setLocale($short);
+                        array_unshift($langKbd, $locale->getString('cancel'));
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => $locale->getString('user_SetLang_Success') . $long,
+                            'reply_markup' => $langKbd
+                        ]);
+                        } else {
+                            array_unshift($langKbd, $locale->getString('cancel'));
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString('user_SetLang_Fail') . $long,
+                                'reply_markup' => $langKbd
+                            ]);
+                        }
+
+
+
+
                     break;
 
             }

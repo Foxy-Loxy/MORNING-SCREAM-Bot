@@ -84,6 +84,26 @@
   "weather_delivery_CacheEmpty" : "<strong> Can't find weather for this date. Seems like they've expired in cache. Use \"Force Weather\" command to get new instance of weather, or wait for your next daily delivery </strong>",
   "weather_delivery_ZeroResults" : "<strong> Sorry for incoveniece. OpenWeatherMap.org returned no weather for location </strong>",
 
+  "user_menu_ServicesKbd" : "\uD83D\uDCEE Set services enabled to deliver",
+  "user_menu_ToggleDelivKbd" : "\uD83D\uDD79 Toggle delivering status",
+  "user_menu_SetLangKbd" : "\uD83C\uDF0D Set interface language",
+  "user_menu_Fail" : "Choose setting from list below",
+
+  "user_ToggleDelivKbd_Body" : "Delivery now is ",
+  "user_ToggleDelivKbd_Body_Enabled" : "enabled",
+  "user_ToggleDelivKbd_Body_Disabled" : "disabled",
+
+  "user_Services_NewsKbd" : "\uD83D\uDCF0 News",
+  "user_Services_WeatherKbd" : "\u2600 Weather",
+  "user_Services_Enter" : "Select services listed below to toggle them for delivering",
+  "user_Services_Fail" : "Choose service from list below",
+  "user_Services_List" : "List of services enabled: ",
+
+  "user_SetLang_Enter" : "Select your preferred language",
+
+  "news" : "News",
+  "weather" : "Weather",
+
   "thunderstorm with light rain" :"\u26C8 Thunderstorm with light rain",
   "thunderstorm with rain" :"\u26C8 Thunderstorm with rain",
   "thunderstorm with heavy rain" :"\u26C8 Thunderstorm with heavy rain",
