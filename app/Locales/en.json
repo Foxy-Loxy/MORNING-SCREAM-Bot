@@ -100,6 +100,8 @@
   "user_Services_List" : "List of services enabled: ",
 
   "user_SetLang_Enter" : "Select your preferred language",
+  "user_SetLang_Success" : "Successfully set your language to ",
+  "user_SetLang_Fail" : "Unable to set this language",
 
   "news" : "News",
   "weather" : "Weather",
