@@ -4,6 +4,9 @@ namespace App\Console;
 
 use App\ModelClass\News;
 use App\ModelClass\Weather;
+use App\NewsCache;
+use App\User;
+use App\WeatherCache;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Laravel\Lumen\Console\Kernel as ConsoleKernel;
@@ -51,5 +54,18 @@ class Kernel extends ConsoleKernel
                     Weather::deliver($time->user);
             }
         })->everyMinute();
+
+/*
+           $schedule->call(function () {
+            WeatherCache::truncate();
+            NewsCache::truncate();
+            $userCache = User::where('delivery_enabled', true)->get();
+            foreach ( $userCache as $user) {
+                $services = explode(',' , $user->services);
+                if (in_array('weather', $services))
+                    Weather::fetch($user->weather->location, $user->weather->units);
+            }
+        })->cron('0 0 * * *');
+*/
     }
 }

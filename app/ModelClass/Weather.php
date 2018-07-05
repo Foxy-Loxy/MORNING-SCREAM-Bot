@@ -218,8 +218,16 @@ class Weather
                     'text' => $locale->getString("weather_delivery_Delivery") . $location,
                     'parse_mode' => 'html'
                 ]);
-
-                $all = array_slice($all, 0, 8);
+                //////////////////////////////////////////////////////////////////////
+                $offset = 0;
+                foreach ($all as $item) {
+                    if (!Carbon::createFromTimestamp($item['dt'])->setTimezone($user->schedule->utc)->isFuture())
+                        $offset++;
+                    else
+                        break;
+                }
+                /////////////////////////////////////////////////////////////////////////
+                $all = array_slice($all, $offset, 8 - $offset);
                 $text = '<strong>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
                 foreach ($all as $entry) {
                     $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
@@ -279,9 +287,17 @@ class Weather
 
         $all = json_decode($response, true);
 
+        $dOffset = 0 ;
+        $d = Carbon::now()->setTimezone($user->schedule->utc)->addDay($page - 1)->startOfDay();
+        foreach ($all as $item){
+            if ($d->greaterThanOrEqualTo(Carbon::createFromTimestamp($item['dt'])->setTimezone($user->schedule->utc)->startOfDay()))
+                $dOffset++;
+        }
+        $length = (40 - $dOffset) % 8;
+
         $offset = ($page * 8) - 8;
 
-        $weather =  array_slice($all, $offset, 8);
+        $weather =  array_slice($all, $dOffset, $length);
 
 		$text = '<strong>' . Carbon::createFromTimestamp($weather[1]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
 
