@@ -32,7 +32,7 @@ class Scheduler
 
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => $locale->getString('scheduler_menu_SetTZ_Enter'),
+            'text' => $locale->getString('scheduler_menu_SetDelivTime_Enter'),
             'reply_markup' => $schedKeyboard
         ]);
     }

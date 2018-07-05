@@ -2,7 +2,7 @@
   "lang" : "Українська",
   "shortLang" : "uk",
 
-  "main_noCommand" : "Гей, я не чат-бот. Користуйся командами навединими нижчке",
+  "main_noCommand" : "Гей, я не чат-бот. Користуйся командами навединими нижче",
   "main_newsCommand" : "Новини",
   "main_weatherCommand" : "Погода",
   "main_settingsCommand" : "Налаштування",
@@ -58,12 +58,12 @@
   "news_delivery_Beginning" : "У початок",
 
   "scheduler_menu_SetTZKbd" : "\uD83C\uDF10 Встановити часовий пояс",
-  "scheduler_menu_SetTZ_Enter" : "Впишіть часовий поясь у будь-якому стандартному форматі. Приклад: \"UTC\", \"EEST\", \"+2:00\", \"-6\"",
+  "scheduler_menu_SetTZ_Enter" : "Впишіть часовий пояс у будь-якому стандартному форматі. Приклад: \"UTC\", \"EEST\", \"+2:00\", \"-6\"",
   "scheduler_SetTZ_Success" : "Встановлено часовий пояс ",
   "scheduler_SetTZ_Fail" : "Неправильний формат часового пояса. Приклад: \"+3\" чи \"-6:30\"",
 
   "scheduler_menu_SetDelivTimeKbd" : "\u23F0 Встановити час доставки",
-  "scheduler_menu_SetDelivTime_Enter" : "Вкажіть час, коли ви хочете отримувати щоденну доставку, у форматі \"ГГ:ХХ AM\\PM\". Зауважте, що AM\\PM не обов'язкове. Якщо Ви хочете вказати част у 24-годинному форматі, просто не пишіть AM\\PM. Приклад: \"13:50\" чи \"1:50 PM\"",
+  "scheduler_menu_SetDelivTime_Enter" : "Вкажіть час, коли ви хочете отримувати щоденну доставку, у форматі \"ГГ:ХХ AM\\PM\". Зауважте, що AM\\PM не обов'язкове. Якщо Ви хочете вказати час у 24-годинному форматі, просто не пишіть AM\\PM. Приклад: \"13:50\" чи \"1:50 PM\"",
   "scheduler_SetDelivTime_Success" : "Час доставки успішно встановлено: ",
   "scheduler_SetDelivTime_Notice" : ". Зауважте що встановлений часовий пояс ",
   "scheduler_SetDelivTime_Fail" : "Невір формат часу. Приклад: \"13:50\" OR \"1:50 PM\"",
@@ -148,13 +148,12 @@
   "squalls" :"\uD83C\uDF2C Шквали",
   "tornado" :"\uD83C\uDF2A Торнадо",
 
-  "clear sky" : "\u2600 Чисте небо",
+  "clear sky" : "\u2600 Сонячно",
 
-  "few clouds" : "\uD83C\uDF24 Декілька хмарок",
-  "scattered clouds" : "\u26C5 Розкидані хмари",
+  "few clouds" : "\uD83C\uDF24 Мінлива хмарність",
+  "scattered clouds" : "\u26C5 Помірна хмарність",
   "broken clouds" : "\uD83C\uDF25 Хмарно",
   "overcast clouds" : "\u2601 Хмарно з проясненнями",
-
   "metric" : "метричні",
   "imperial" : "імперіальні"
 }

@@ -15,7 +15,7 @@ class News extends Model
     const NAME = 'news';
 
     protected $fillable = [
-        'chat_id', 'categories'
+        'chat_id', 'categories', 'country'
     ];
 
     public function user(){

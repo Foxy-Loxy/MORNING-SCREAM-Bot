@@ -18,6 +18,7 @@ class CreateNewsTable extends Migration
                 ->onDelete('cascade');
 
             $table->string('categories')->nullable();
+            $table->string('country')->default('gb');
             
             $table->timestamps();
         });

@@ -17,7 +17,14 @@ class News
     static public function scheduleCall(User $user)
     {
         $locale = app(Localize::class);
-
+        $catKeyboard = Keyboard::make([
+            'keyboard' => [
+                [$locale->getString('news_menu_SetCountry')],
+                [$locale->getString('news_menu_SetCat')],
+                [$locale->getString('cancel')]
+            ]
+        ]);
+/*
         $catKeyboard = Keyboard::make([
             'keyboard' => [
                 [$locale->getString('news_cat_BusinessKbd'), $locale->getString('news_cat_EntertrainmentKbd'), $locale->getString('news_cat_HealthKbd')],
@@ -28,10 +35,12 @@ class News
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
+*/
+
         //Since only operation available for this service will be
         $user->update([
             'function' => \App\News::NAME,
-            'function_state' => 'WAITING_FOR_CATEGORY'
+            'function_state' => 'WAITING_FOR_CATEGORY_'
         ]);
 
         $tmp = \App\News::where('chat_id', $user->chat_id)->get();
