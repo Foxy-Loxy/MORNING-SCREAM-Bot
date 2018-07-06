@@ -129,6 +129,20 @@ class WebhookController extends Controller
                         \App\ModelClass\Weather::scrollMessage($user, $data['message']['message_id'], $data['id'], $input[1]);
                         return new JsonResponse('OK', 200);
                   	  break;
+
+                    case 'donate':
+                        Telegram::answerCallbackQuery([
+                            'callback_query_id' => $data['id'],
+                            'text' => "1234 5678 9000 0000 PrivatBank. Thanks for your support :)"
+                        ]);
+                        break;
+
+                    case 'credits':
+                        Telegram::answerCallbackQuery([
+                            'callback_query_id' => $data['id'],
+                            'text' => "\"Morning Scream Bot\" by Kirll Avramenko(@foxyloxy)\nSource code: https://github.com/Foxy-Loxy/MORNING-sCREAM-Bot\nServices used:\nnewsapi.org\nopenweathermap.org\nGoogle Geocoding API\nGoogle Timezone API"
+                        ]);
+                        break;
                   	  
                     case 'null':
 
