@@ -174,11 +174,10 @@ class User
                         'services' => implode(',', array_filter($serArr))
                     ]);
                     $list = '';
-                    foreach ($serArr as $ser)
-                        $list .= ucfirst($ser) . ' | ';
+
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
-                        'text' => $locale->getString("user_Services_List") . $list,
+                        'text' => $locale->getString("user_Services_List") . $user->FancyServices(),
                         'reply_markup' => $servKeyboard
                     ]);
                     break;
