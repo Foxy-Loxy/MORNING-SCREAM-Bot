@@ -9,7 +9,7 @@
   "main_scheduleCommand" : "Планування",
   "main_wrongInput" : "Недопустимий ввід",
 
-  "main_newsKbd" : "\uD83D\uDCF0 Встановити категорії новин",
+  "main_newsKbd" : "\uD83D\uDCF0 Встановити налаштування новин",
   "main_weatherKbd" : "\uD83C\uDF21 Встановити налаштування погоди",
   "main_settingsKbd" : "\uD83D\uDD27 Встановити налаштування акаунту",
   "main_summaryKbd" : "\u2699 Побачити підсумок усіх налаштувань",

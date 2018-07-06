@@ -9,7 +9,7 @@
   "main_scheduleCommand": "Schedule",
   "main_wrongInput": "Unacceptable",
 
-  "main_newsKbd": "\uD83D\uDCF0 Set news categories",
+  "main_newsKbd": "\uD83D\uDCF0 Set news preferences",
   "main_weatherKbd": "\uD83C\uDF21 Set weather preferences",
   "main_settingsKbd": "\uD83D\uDD27 Set account preferences",
   "main_summaryKbd": "\u2699 See all account preferences",
