@@ -17,12 +17,14 @@ class News
     static public function scheduleCall(User $user)
     {
         $locale = app(Localize::class);
-        $catKeyboard = Keyboard::make([
+        $menuKeyboard = Keyboard::make([
             'keyboard' => [
                 [$locale->getString('news_menu_SetCountry')],
                 [$locale->getString('news_menu_SetCat')],
                 [$locale->getString('cancel')]
-            ]
+            ],
+            'resize_keyboard' => true,
+            'one_time_keyboard' => true
         ]);
 /*
         $catKeyboard = Keyboard::make([
@@ -40,7 +42,7 @@ class News
         //Since only operation available for this service will be
         $user->update([
             'function' => \App\News::NAME,
-            'function_state' => 'WAITING_FOR_CATEGORY_'
+            'function_state' => 'WAITING_FOR_CATEGORY_MENU'
         ]);
 
         $tmp = \App\News::where('chat_id', $user->chat_id)->get();
@@ -51,8 +53,8 @@ class News
 
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => $locale->getString('news_choose'),
-            'reply_markup' => $catKeyboard
+            'text' => $locale->getString('news_menu_Enter'),
+            'reply_markup' => $menuKeyboard
         ]);
     }
 
@@ -70,12 +72,34 @@ class News
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
-        /*    
-		Telegram::sendMessage([
-      	  'chat_id' => $user->chat_id,
-      	  'text' => $input . "\u{26BD}" . ("\u{26BD} Sports" == $input) . ' | ' . ($user->function == \App\News::NAME) . ' | ' .($user->function_state != null)
+
+        $menuKeyboard = Keyboard::make([
+            'keyboard' => [
+                [$locale->getString('news_menu_SetCountry')],
+                [$locale->getString('news_menu_SetCat')],
+                [$locale->getString('cancel')]
+            ],
+            'resize_keyboard' => true,
+            'one_time_keyboard' => true
         ]);
-        */
+        $countKeyboard = Keyboard::make([
+                'keyboard' => [
+                    [$locale->getString('cancel')],
+                    ['ae', 'ar', 'at', 'au', 'be', 'bg'],
+                    ['br', 'ca', 'ch', 'cn', 'co', 'cu'],
+                    ['cz', 'de', 'eg', 'fr', 'gb', 'gr'],
+                    ['hk', 'hu', 'id', 'ie', 'il', 'in'],
+                    ['it', 'jp', 'kr', 'lt', 'lv', 'ma'],
+                    ['mx', 'my', 'ng', 'nl', 'no', 'nz'],
+                    ['ph', 'pl', 'pt', 'ro', 'rs', 'ru'],
+                    ['sa', 'se', 'sg', 'si', 'sk' ,'th'],
+                    ['tr', 'tw', 'ua', 'us', 've', 'za']
+                ]
+            ]);
+
+
+
+
         if ($user->function == \App\News::NAME && $user->function_state != null) {
 
             switch ($input) {
@@ -94,6 +118,77 @@ class News
                     break;
             }
             switch ($user->function_state) {
+
+                case 'WAITING_FOR_COUNTRY':
+                    $countries = array(
+                                        'ae', 'ar', 'at', 'au', 'be', 'bg',
+                                        'br', 'ca', 'ch', 'cn', 'co', 'cu',
+                                        'cz', 'de', 'eg', 'fr', 'gb', 'gr',
+                                        'hk', 'hu', 'id', 'ie', 'il', 'in',
+                                        'it', 'jp', 'kr', 'lt', 'lv', 'ma',
+                                        'mx', 'my', 'ng', 'nl', 'no', 'nz',
+                                        'ph', 'pl', 'pt', 'ro', 'rs', 'ru',
+                                        'sa', 'se', 'sg', 'si', 'sk', 'th',
+                                        'tr', 'tw', 'ua', 'us', 've', 'za'
+                    );
+                    if (in_array($input, $countries)){
+                        $user->news->update([
+                            'country' => $input
+                        ]);
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => $locale->getString('news_SetCountry_Success') . strtoupper($user->news->country),
+                            'reply_markup' => $countKeyboard
+                        ]);
+                        return true;
+                    } else {
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => $locale->getString('news_SetCountry_Fail'),
+                            'reply_markup' => $countKeyboard
+                        ]);
+                        return false;
+                    }
+                    break;
+
+                case 'WAITING_FOR_CATEGORY_MENU':
+                    switch ($input) {
+
+                        case $locale->getString('news_menu_SetCountry'):
+                            $user->update([
+                                'function' => \App\News::NAME,
+                                'function_state' => 'WAITING_FOR_COUNTRY'
+                            ]);
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString('news_Country_Enter'),
+                                'reply_markup' => $countKeyboard
+                            ]);
+                            return true;
+                            break;
+
+                        case $locale->getString('news_menu_SetCat'):
+                            $user->update([
+                                'function' => \App\News::NAME,
+                                'function_state' => 'WAITING_FOR_CATEGORY'
+                            ]);
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString('news_choose'),
+                                'reply_markup' => $catKeyboard
+                            ]);
+                            return true;
+                            break;
+
+                        default:
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString('news_menu_Fail'),
+                                'reply_markup' => $menuKeyboard
+                            ]);
+                            return false;
+                    }
+                    break;
 
                 case 'WAITING_FOR_CATEGORY':
 
@@ -194,7 +289,7 @@ class News
                 $response = $cache->content;
             } else {
                 $i = 0;
-                while (!News::fetch($category)) {
+                while (!News::fetch($category, $user->news->country)) {
                     if ($i == 4) {
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
@@ -325,13 +420,14 @@ class News
         return true;
     }
 
-    static public function fetch($category)
+    static public function fetch($category, $country)
     {
-        $arts = NewsCache::where('category', $category)->get();
+        $arts = NewsCache::where('category', $category)->where('country', $country)->get();
         if ($arts->isEmpty()) {
-            $endpoint = "https://newsapi.org/v2/top-headlines?country=ua&apiKey={API_KEY}&category={CATEGORY}&pageSize=10";
+            $endpoint = "https://newsapi.org/v2/top-headlines?country={COUNTRY}&apiKey={API_KEY}&category={CATEGORY}&pageSize=10";
             $endpoint = str_replace("{API_KEY}", env('NEWS_API_TOKEN'), $endpoint);
             $endpoint = str_replace("{CATEGORY}", $category, $endpoint);
+            $endpoint = str_replace("{COUNTRY}", $country, $endpoint);
 
             $curl = curl_init();
             curl_setopt_array($curl, [
@@ -350,7 +446,8 @@ class News
             if (isset($response['articles']) && !empty($response['articles'])) {
                 NewsCache::create([
                     'category' => $category,
-                    'content' => json_encode($response['articles'])
+                    'content' => json_encode($response['articles']),
+                    'country' => $country
                 ]);
                 return true;
             } else
