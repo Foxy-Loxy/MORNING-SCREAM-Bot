@@ -9,7 +9,7 @@ class CreateNewsCacheTable extends Migration
     public function up()
     {
         Schema::create('news_cache', function (Blueprint $table) {
-            $table->string('category')->unique();
+            $table->string('category')->nullable();
             $table->string('country')->nullable();
             $table->json('content');
 

@@ -17,6 +17,7 @@ class News
     static public function scheduleCall(User $user)
     {
         $locale = app(Localize::class);
+
         $menuKeyboard = Keyboard::make([
             'keyboard' => [
                 [$locale->getString('news_menu_SetCountry')],
@@ -38,24 +39,19 @@ class News
             'one_time_keyboard' => true
         ]);
 */
-
+        Telegram::sendMessage([
+            'chat_id' => $user->chat_id,
+            'text' => $locale->getString('news_menu_Enter'),
+            'reply_markup' => $menuKeyboard
+        ]);
         //Since only operation available for this service will be
         $user->update([
             'function' => \App\News::NAME,
             'function_state' => 'WAITING_FOR_CATEGORY_MENU'
         ]);
 
-        $tmp = \App\News::where('chat_id', $user->chat_id)->get();
-        if($tmp->isEmpty)
-            \App\News::create([
-                'chat_id' => $user->chat_id
-            ]);
 
-        Telegram::sendMessage([
-            'chat_id' => $user->chat_id,
-            'text' => $locale->getString('news_menu_Enter'),
-            'reply_markup' => $menuKeyboard
-        ]);
+        
     }
 
     static public function scheduleConfirm(User $user, string $input, Keyboard $exitKbd)
@@ -283,7 +279,7 @@ class News
         $categories = explode(',', $user->news->categories);
         $response = '';
         foreach ($categories as $category) {
-            $cache = NewsCache::where('category', $category)->get();
+            $cache = NewsCache::where('category', $category)->where('country', $user->news->country)->get();
             if ($cache->isNotEmpty()) {
                 $cache = $cache[0];
                 $response = $cache->content;
@@ -306,7 +302,7 @@ class News
             $all = array();
 
             if (isset($response)) {
-                $cache = NewsCache::where('category', $category)->get();
+                $cache = NewsCache::where('category', $category)->where('country', $user->news->country)->get();
                 if ($cache->isNotEmpty()) {
                     $cache = $cache[0];
                     $all = json_decode($cache->content, true);
@@ -352,7 +348,7 @@ class News
     {
         $locale = app(Localize::class);
         
-        $cache = NewsCache::where('category', $cat)->get();
+        $cache = NewsCache::where('category', $cat)->where('country', $user->news->country)->get();
         if ($cache->isNotEmpty()) {
             $cache = $cache[0];
             $response = $cache->content;

@@ -60,7 +60,7 @@ class Kernel extends ConsoleKernel
           		WeatherCache::truncate();
           		NewsCache::truncate();
             }
-        })->cron('0 0 * * *');
+        )->cron('0 0 * * *');
 
     }
 }
