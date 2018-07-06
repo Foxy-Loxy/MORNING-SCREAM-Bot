@@ -218,21 +218,24 @@ class Weather
                     'text' => $locale->getString("weather_delivery_Delivery") . $location,
                     'parse_mode' => 'html'
                 ]);
-                //////////////////////////////////////////////////////////////////////
-                $offset = 0;
-                foreach ($all as $item) {
-                    if (!Carbon::createFromTimestamp($item['dt'])->setTimezone($user->schedule->utc)->isFuture())
-                        $offset++;
-                    else
-                        break;
-                }
-                /////////////////////////////////////////////////////////////////////////
-                $all = array_slice($all, $offset, 8 - $offset);
-                $text = '<strong>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
-                foreach ($all as $entry) {
+                
+				$offset = Carbon::now()->timezone($user->schedule->utc)->format('Z');
+      			$cacheBeginDate = Carbon::createFromTimestamp($all[0]['dt'])->startOfDay();
+      			$cacheAimDate = $cacheBeginDate->addDays(0);
+      			$right = array();
+        
+      			foreach ($all as $entry) {
+      				if(Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset)->format('d-m-Y') == $cacheAimDate->format('d-m-Y'))
+      					$right[]= $entry;
+      			}
+      			
+                $text = '<strong>' . Carbon::createFromTimestamp($right[0]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
+                foreach ($right as $entry) {
                     $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
                     $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i A')) . ' ' . (Helper::sign($temp) == 1 ? '+' : '-') . $temp . ' ';
                     $text .= ' ' . $locale->getString($entry['weather'][0]['description']) . "\n";
+                    if (Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i') == '00:00')
+                  	  break;
                 }
 
                 Telegram::sendMessage([
@@ -243,11 +246,11 @@ class Weather
                     'reply_markup' => Keyboard::make()
                         ->inline()
                         ->row(
-                            Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d/m') . '<', 'callback_data' => 'null']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDay()->format('d/m'), 'callback_data' => 'weather 2']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m'), 'callback_data' => 'weather 3']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m'), 'callback_data' => 'weather 4']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m'), 'callback_data' => 'weather 5'])
+                            Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->format('d/m') . '<', 'callback_data' => 'null']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDay()->format('d/m'), 'callback_data' => 'weather 2']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m'), 'callback_data' => 'weather 3']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m'), 'callback_data' => 'weather 4']),
+                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m'), 'callback_data' => 'weather 5'])
                         )
                 ]);
             }
@@ -287,27 +290,20 @@ class Weather
 
         $all = json_decode($response, true);
 
-        $dOffset = 0 ;
-        $d = Carbon::now()->setTimezone($user->schedule->utc)->addDay($page - 1)->startOfDay();
-        foreach ($all as $item){
-            if ($d->greaterThanOrEqualTo(Carbon::createFromTimestamp($item['dt'])->setTimezone($user->schedule->utc)->startOfDay()))
-                $dOffset++;
+		$offset = Carbon::now()->timezone($user->schedule->utc)->format('Z');
+        $cacheBeginDate = Carbon::createFromTimestamp($all[0]['dt'])->startOfDay();
+        $cacheAimDate = $cacheBeginDate->addDays($page - 1);
+        $right = array();
+        
+        foreach ($all as $entry) {
+      		if(Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset)->format('d-m-Y') == $cacheAimDate->format('d-m-Y'))
+      			$right[]= $entry;
         }
-        $length = (40 - $dOffset) % 8;
 
-        $offset = ($page * 8) - 8;
-
-        $weather =  array_slice($all, $dOffset, $length);
-
-		$text = '<strong>' . Carbon::createFromTimestamp($weather[1]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
-
-        foreach ($weather as $entry) {
+		$text = '<strong>'  .   Carbon::createFromTimestamp($right[0]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
+        foreach ($right as $entry) {
             $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
             $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->format('H:i A')) . ' ' . (Helper::sign($temp) == 1 ? '+' : '-') . $temp . ' ';
-//            Telegram::sendMessage([
-//          	  'chat_id' => $user->chat_id,
-//          	  'text' => print_r($entry['weather'][0]['description'], true)
-//            ]);
             $text .= ' ' . $locale->getString($entry['weather'][0]['description']) . "\n";
         }
 
@@ -324,11 +320,11 @@ class Weather
             'reply_markup' => Keyboard::make()
                 ->inline()
                 ->row(
-                    ($page == 1 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->format('d/m'), 'callback_data' => 'weather 1'])),
-                    ($page == 2 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(1)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(1)->format('d/m') , 'callback_data' => 'weather 2'])),
-                    ($page == 3 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m') , 'callback_data' => 'weather 3'])),
-                    ($page == 4 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m') , 'callback_data' => 'weather 4'])),
-                    ($page == 5 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[1]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m') , 'callback_data' => 'weather 5']))
+                    ($page == 1 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->format('d/m'), 'callback_data' => 'weather 1'])),
+                    ($page == 2 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(1)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(1)->format('d/m') , 'callback_data' => 'weather 2'])),
+                    ($page == 3 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(2)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m') , 'callback_data' => 'weather 3'])),
+                    ($page == 4 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(3)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m') , 'callback_data' => 'weather 4'])),
+                    ($page == 5 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(4)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m') , 'callback_data' => 'weather 5']))
                 )
         ]);
         $user->update(['function' => null, 'function_state' => null]);

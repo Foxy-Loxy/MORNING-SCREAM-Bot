@@ -55,17 +55,12 @@ class Kernel extends ConsoleKernel
             }
         })->everyMinute();
 
-/*
+
            $schedule->call(function () {
-            WeatherCache::truncate();
-            NewsCache::truncate();
-            $userCache = User::where('delivery_enabled', true)->get();
-            foreach ( $userCache as $user) {
-                $services = explode(',' , $user->services);
-                if (in_array('weather', $services))
-                    Weather::fetch($user->weather->location, $user->weather->units);
+          		WeatherCache::truncate();
+          		NewsCache::truncate();
             }
         })->cron('0 0 * * *');
-*/
+
     }
 }
