@@ -33,6 +33,14 @@
   "business": "Business",
   "entertainment": "Entertainment",
 
+  "news_menu_Enter" : "Select preference from list below",
+  "news_menu_Fail" : "Select preference from list below",
+  "news_menu_SetCountry" : "\uD83C\uDF0D Set news country origin",
+  "news_menu_SetCat" : "\uD83D\uDCF0 Set news Categories"  ,
+  "news_Country_Enter" : "Select country code of desired country from keyboard",
+  "news_SetCountry_Success" : "Successfully set news origin country to ",
+  "news_SetCountry_Fail" : "Select country code from keyboard",
+
   "news_cat_BusinessKbd" : "\uD83D\uDCB2 Business",
   "news_cat_EntertrainmentKbd" : "\uD83C\uDFB6 Entertrainment",
   "news_cat_HealthKbd" : "\uD83C\uDFE5 Health",

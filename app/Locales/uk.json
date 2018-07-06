@@ -33,6 +33,14 @@
   "business": "Бізнес",
   "entertainment": "Зіркові новини",
 
+  "news_menu_Enter" : "Виберіть налаштування із списку нижче",
+  "news_menu_Fail" : "Виберіть налаштування із клавіатури",
+  "news_menu_SetCountry" : "\uD83C\uDF0D Встановити країну походження новин",
+  "news_menu_SetCat" : "\uD83D\uDCF0 Встановити категорії новин"  ,
+  "news_Country_Enter" : "Виберіть код країни, з якої хочете отримувати новини, на клавіатурі",
+  "news_SetCountry_Success" : "Успішно встановлено країну походження на ",
+  "news_SetCountry_Fail" : "Виберіть код країни з клавіатури",
+
   "news_cat_BusinessKbd" : "\uD83D\uDCB2 Бізнес",
   "news_cat_EntertrainmentKbd" : "\uD83C\uDFB6 Зіркові новини",
   "news_cat_HealthKbd" : "\uD83C\uDFE5 Здоров'я",
