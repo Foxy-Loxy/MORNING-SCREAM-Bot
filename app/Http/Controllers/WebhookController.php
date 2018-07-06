@@ -133,14 +133,16 @@ class WebhookController extends Controller
                     case 'donate':
                         Telegram::answerCallbackQuery([
                             'callback_query_id' => $data['id'],
-                            'text' => "1234 5678 9000 0000 PrivatBank. Thanks for your support :)"
+                            'text' => "1234 5678 9000 0000 PrivatBank. Thanks for your support :)",
+                            'show_alert' => true
                         ]);
                         break;
 
                     case 'credits':
                         Telegram::answerCallbackQuery([
                             'callback_query_id' => $data['id'],
-                            'text' => "\"Morning Scream Bot\" by Kirll Avramenko(@foxyloxy)\nSource code: https://github.com/Foxy-Loxy/MORNING-sCREAM-Bot\nServices used:\nnewsapi.org\nopenweathermap.org\nGoogle Geocoding API\nGoogle Timezone API"
+                            'text' => "\"Morning Scream Bot\" by Kirll Avramenko(@foxyloxy)\nSource code: https://github.com/Foxy-Loxy/MORNING-sCREAM-Bot\nServices used:\nnewsapi.org\nopenweathermap.org\nGoogle Geocoding API\nGoogle Timezone API",
+                            'show_alert' => true              
                         ]);
                         break;
                   	  
