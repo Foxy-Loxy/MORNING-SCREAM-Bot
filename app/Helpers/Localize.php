@@ -32,6 +32,16 @@ class Localize
             return $str;
         return $this->locale_strings[$str];
     }
+    
+    public static function getShortLocales(){
+  	  $localeArr = array_diff(scandir(base_path('app/Locales')), array('..', '.'));
+  	  return array_filter(array_map( function ($a) { 
+  					if(strpos($a, '.json') !== false)
+  						return str_replace('.json', '', $a);
+  					else
+  						return '';
+  				} , $localeArr));
+    }
 
     public function getAllLocales()
     {

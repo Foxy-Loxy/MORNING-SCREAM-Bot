@@ -65,15 +65,21 @@ class Weather
 
         $canKeyboard = Keyboard::make([
             'keyboard' => [
-                Keyboard::button([
+                [Keyboard::button([
                     'text' =>  $locale->getString("weather_GetLoc_KbdMsg"),
                     'request_location' => true
-                ]),
-                [$locale->getString("cancel")]
+                ])],
+                [ $locale->getString("cancel") ]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
         ]);
+        
+//                Telegram::sendMessage([
+//                        'chat_id' => $user->chat_id,
+//                        'text' => print_r($canKeyboard, true),
+//                        'reply_markup' => $exitKbd
+//                    ]);
 
         if ($user->function == \App\Weather::NAME && $user->function_state != null) {
 
@@ -135,7 +141,14 @@ class Weather
 //                        } else
 //                            $input = $input['text'];
                     $weatherUser = \App\Weather::where('chat_id', $user->chat_id)->get()[0];
-
+//                        Telegram::sendMessage([
+//                            'chat_id' => $user->chat_id,
+//                            'text' => print_r(Keyboard::make([
+//                          		[['text' => 'qwe', 'request_location' => true]]
+//                            ]), true
+//                            ),
+//                            'reply_markup' => $canKeyboard
+//                        ]);
                     try {
                         $data = Helper::getCityAndCountryGoogle($input);
                     } catch (\Exception $e) {

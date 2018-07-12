@@ -61,6 +61,21 @@ class WebhookController extends Controller
         // Register user if not identified
         //
         if ($user->isEmpty()){
+      		$rq = $rqData;
+			$lang = 'en';
+      		if(isset($rq['message']['entities'][0]['type']) && isset($rq['message']['text'])) {
+      			if($rq['message']['entities'][0]['type'] == 'bot_command' && strpos($rq['message']['text'], '/start') !== false)
+      				$q = str_replace('/start ', '', $rq['message']['text']);
+      				$locs = Localize::getShortLocales();
+//      				        Telegram::sendMessage([
+//                                'chat_id' => $user_data['chat_id'],
+//                                'text' => print_r($locs, true)
+//                            ]);
+      				if (in_array($q, $locs)){
+      					$lang = $q;
+      					$rqData['message']['text'] = '/start';
+      				}
+      			}
             $user = User::create([
                 'first_name' => $user_data['first_name'],
                 'last_name' => $user_data['last_name'],
@@ -69,6 +84,7 @@ class WebhookController extends Controller
                 'services' => 'news,weather',
                 'function' => null,
                 'function_args' => null,
+                'lang' => $lang
             ]);
             Helper::createUserDefault($user->chat_id);
           }
@@ -100,6 +116,12 @@ class WebhookController extends Controller
         //
 
         $data = Helper::getInputData($rqData);
+        
+//                          Telegram::sendMessage([
+//                                'chat_id' => $user->chat_id,
+//                                'text' => print_r($request->all(), true)
+//                            ]);
+
 
         switch ($data['type']) {
             case 'callback_query':
@@ -202,7 +224,8 @@ class WebhookController extends Controller
                         case '/start':
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => $locale->getString("start_Message")
+                                'text' => $locale->getString("start_Message"),
+                                'reply_markup' => $menuKeyboard
                             ]);
                             break;
                         case $locale->getString("main_newsKbd"):

@@ -121,6 +121,7 @@ class User
                             $kbdArr = array();
                             foreach ($langArr as $lang)
                                 $kbdArr[] = array(strtoupper($lang['short']) . ' | ' . $lang['full']);
+                      		array_unshift($kbdArr, [$locale->getString('cancel'), "\u{2753} Can't find my language"]);
                             $Kbd = Keyboard::make([
                                 'keyboard' => $kbdArr,
                                 'resize_keyboard' => true,
