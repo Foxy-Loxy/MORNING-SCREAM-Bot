@@ -47,6 +47,9 @@ class Kernel extends ConsoleKernel
         $schedule->call(function () {
             $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC')->format('H:i'))->get();
             foreach ($timed as $time) {
+          		app()->singleton(\App\Helpers\Localize::class, function () use ($time) {
+          			return new \App\Helpers\Localize($time->user->lang);
+          		});
                 $serviceArr = explode(',', $time->user->services);
                 if (in_array('news', $serviceArr) && $time->user->delivery_enabled == true)
                     News::deliver($time->user);

@@ -224,7 +224,7 @@ class WebhookController extends Controller
                             \App\ModelClass\News::deliver($user);
                             break;
                         case "Force Weather":
-                      		\App\WeatherCache::truncate();
+//                      		\App\WeatherCache::truncate();
                             \App\ModelClass\Weather::deliver($user);
                             break;
                         case $locale->getString("main_summaryKbd"):

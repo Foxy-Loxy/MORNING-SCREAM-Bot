@@ -23,7 +23,7 @@ class News extends Model
     }
 
     public  function FancyCategories(){
-  		$locale = app(Localize::class);
+  		$locale = app(\App\Helpers\Localize::class);
         $cat = explode(',',$this->categories);
         $translated = array();
         foreach ($cat as $item)
