@@ -188,7 +188,7 @@ class Weather
             $response = $cache->content;
         } else {
             $i = 0;
-            while (!Weather::fetch($location, $user->weather->units)) {
+            while (!Weather::fetch($location, $user->weather->units, $user->weather->lat, $user->weather->lon)) {
                 if ($i == 4) {
                     Telegram::sendMessage([
                         'chat_id' => $user->chat_id,
@@ -315,10 +315,11 @@ class Weather
             $text .= ' ' . $locale->getString($entry['weather'][0]['description']) . "\n";
         }
 
+        $first = Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc)->subDays($page - 1);
+
         Telegram::answerCallbackQuery([
             'callback_query_id' => $callbackId
         ]);
-        
 //        if ((Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->format('d-m-Y') != $cacheBeginDate->format('d-m-Y'))
 //      		$t = ();
 
@@ -331,11 +332,11 @@ class Weather
             'reply_markup' => Keyboard::make()
                 ->inline()
                 ->row(
-                    ($page == 1 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->format('d/m'), 'callback_data' => 'weather 1'])),
-                    ($page == 2 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(1)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(1)->format('d/m') , 'callback_data' => 'weather 2'])),
-                    ($page == 3 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(2)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m') , 'callback_data' => 'weather 3'])),
-                    ($page == 4 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(3)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m') , 'callback_data' => 'weather 4'])),
-                    ($page == 5 ? Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->addSeconds($offset)->addDays(4)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m') , 'callback_data' => 'weather 5']))
+                    ($page == 1 ? Keyboard::inlineButton(['text' => '>' . $first->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->format('d/m'), 'callback_data' => 'weather 1'])),
+                    ($page == 2 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(1)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(1)->format('d/m') , 'callback_data' => 'weather 2'])),
+                    ($page == 3 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(2)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(2)->format('d/m') , 'callback_data' => 'weather 3'])),
+                    ($page == 4 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(3)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(3)->format('d/m') , 'callback_data' => 'weather 4'])),
+                    ($page == 5 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(4)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(4)->format('d/m') , 'callback_data' => 'weather 5']))
                 )
         ]);
         $user->update(['function' => null, 'function_state' => null]);
@@ -344,14 +345,23 @@ class Weather
     }
 
 
-    static public function fetch($location, $units)
+    static public function fetch($location, $units, $lat = 0, $lon = 0)
     {
         $locale = app(Localize::class);
         $weather = WeatherCache::where('location', $location)->where('units', $units)->get();
         if ($weather->isEmpty()) {
-            $endpoint = "http://api.openweathermap.org/data/2.5/forecast?q={LOCATION}&appid={API_KEY}&units={UNITS}";
+            $endpoint = '';
+            if ($lat != 0 && $lon != 0) {
+                $endpoint = "http://api.openweathermap.org/data/2.5/forecast?lat={LAT}&lon={LON}&appid={API_KEY}&units={UNITS}";
+                $endpoint = str_replace("{LON}", $lon, $endpoint);
+                $endpoint = str_replace("{LAT}", $lat, $endpoint);
+            } else {
+                $endpoint = "http://api.openweathermap.org/data/2.5/forecast?q={LOCATION}&appid={API_KEY}&units={UNITS}";
+                $endpoint = str_replace("{LOCATION}", $location, $endpoint);
+            }
+//            $endpoint = "http://api.openweathermap.org/data/2.5/forecast?q={LOCATION}&appid={API_KEY}&units={UNITS}";
             $endpoint = str_replace("{API_KEY}", env('WEATHER_API_TOKEN'), $endpoint);
-            $endpoint = str_replace("{LOCATION}", $location, $endpoint);
+//            $endpoint = str_replace("{LOCATION}", $location, $endpoint);
             $endpoint = str_replace("{UNITS}", $units, $endpoint);
 
             $curl = curl_init();

@@ -199,6 +199,12 @@ class WebhookController extends Controller
                     }
                 else
                     switch ($input) {
+                        case '/start':
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString("start_Message")
+                            ]);
+                            break;
                         case $locale->getString("main_newsKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
