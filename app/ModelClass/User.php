@@ -198,7 +198,7 @@ class User
                                 'lang' => $short
                             ]);
                         $locale->setLocale($short);
-                        array_unshift($kbdArr, [$locale->getString('cancel')]);
+                        array_unshift($kbdArr, [$locale->getString('cancel'), "\u{2753} Can't find my language"]);
                       		$Kbd = Keyboard::make([
                       		    'keyboard' => $kbdArr,
           						'resize_keyboard' => true,
@@ -212,12 +212,20 @@ class User
                         return true;
                         }
                     }
-                    array_unshift($kbdArr, [$locale->getString('cancel')]);
+                    array_unshift($kbdArr, [$locale->getString('cancel'), "\u{2753} Can't find my language"]);
               		$Kbd = Keyboard::make([
 	        		    'keyboard' => $kbdArr,
           				'resize_keyboard' => true,
           				'one_time_keyboard' => true
-                  	]);                            
+                  	]);
+                    if ($input == "\u{2753} Can't find my language") {
+                        Telegram::sendMessage([
+                            'chat_id' => $user->chat_id,
+                            'text' => "Unfortunately, developer of this bot don't know every single language of it's users. If you natively speak language, which isn't listed here, please, consider contributing to translation of this bot. Contact developer (@foxyloxy) for more information. Thank you !",
+                            'reply_markup' => $Kbd
+                        ]);
+                        return true;
+                    }
                     Telegram::sendMessage([
                   		'chat_id' => $user->chat_id,
                   		'text' => $locale->getString('user_SetLang_Fail'),

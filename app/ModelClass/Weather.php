@@ -65,6 +65,10 @@ class Weather
 
         $canKeyboard = Keyboard::make([
             'keyboard' => [
+                Keyboard::button([
+                    'text' =>  $locale->getString("weather_GetLoc_KbdMsg"),
+                    'request_location' => true
+                ]),
                 [$locale->getString("cancel")]
             ],
             'resize_keyboard' => true,
@@ -333,10 +337,10 @@ class Weather
                 ->inline()
                 ->row(
                     ($page == 1 ? Keyboard::inlineButton(['text' => '>' . $first->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->format('d/m'), 'callback_data' => 'weather 1'])),
-                    ($page == 2 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(1)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(1)->format('d/m') , 'callback_data' => 'weather 2'])),
-                    ($page == 3 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(2)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(2)->format('d/m') , 'callback_data' => 'weather 3'])),
-                    ($page == 4 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(3)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(3)->format('d/m') , 'callback_data' => 'weather 4'])),
-                    ($page == 5 ? Keyboard::inlineButton(['text' => '>' . $first->addDays(4)->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDays(4)->format('d/m') , 'callback_data' => 'weather 5']))
+                    ($page == 2 ? Keyboard::inlineButton(['text' => '>' . $first->addDay()->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDay()->format('d/m') , 'callback_data' => 'weather 2'])),
+                    ($page == 3 ? Keyboard::inlineButton(['text' => '>' . $first->addDay()->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDay()->format('d/m') , 'callback_data' => 'weather 3'])),
+                    ($page == 4 ? Keyboard::inlineButton(['text' => '>' . $first->addDay()->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDay()->format('d/m') , 'callback_data' => 'weather 4'])),
+                    ($page == 5 ? Keyboard::inlineButton(['text' => '>' . $first->addDay()->format('d/m') . '<', 'callback_data' => 'null']) : Keyboard::inlineButton(['text' =>  $first->addDay()->format('d/m') , 'callback_data' => 'weather 5']))
                 )
         ]);
         $user->update(['function' => null, 'function_state' => null]);

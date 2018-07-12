@@ -2,6 +2,8 @@
   "lang": "English",
   "shortLang": "en",
 
+  "start_Message": "Hi! Welcome to Morning Scream Bot! To fully benefit of my features, please consider set me up before use. You can do this by using keyboard below. And please, keep in mind, that developer is not a robot, so please consider to report any problems to him, or just leave a feedback (@foxyloxy). Hope you'll enjoy my service :)",
+
   "main_noCommand": "Hey, I'm not a chatbot. Use commands listed below",
   "main_newsCommand": "News",
   "main_weatherCommand": "Weather",
@@ -83,6 +85,7 @@
   "weather_menu_SetLocKbd" : "\uD83C\uDF0D Set location to get weather",
   "weather_ToggleResult" : "Your preferred units now are set to ",
   "weather_SetLoc_Request" : "Send me your location, or enter city name to set weather origin",
+  "weather_GetLoc_KbdMsg" : "\uD83D\uDCCC Send your current location",
   "weather_SetLoc_Success" : "Successfully set location to ",
   "weather_SetLoc_Fail" : "Can't find city by this data",
   "weather_SetLoc_TZ_Fail" : "Can't update timezone automatically here",
@@ -106,6 +109,9 @@
   "user_Services_Enter" : "Select services listed below to toggle them for delivering",
   "user_Services_Fail" : "Choose service from list below",
   "user_Services_List" : "List of services enabled: ",
+
+  "user_SetLang_NoLang_Kbd" : "\u2753 Can't find my language",
+  "user_SetLang_NoLang_Response" : "Unfortunately, developer of this bot don't know every single language of it's users. If you natively speak language, which isn't listed here, please, consider contributing to translation of this bot. Contact developer (@foxyloxy) for more information. Thank you !",
 
   "user_SetLang_Enter" : "Select your preferred language",
   "user_SetLang_Success" : "Successfully set your language to ",
