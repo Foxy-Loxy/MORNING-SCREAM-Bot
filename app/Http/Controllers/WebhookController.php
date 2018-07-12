@@ -273,10 +273,6 @@ class WebhookController extends Controller
 
                         case $locale->getString("main_settingsKbd"):
                             \App\ModelClass\User::scheduleCall($user);
-                            Telegram::sendMessage([
-                                'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => $locale->getString("main_settingsCommand"),
-                            ]);
                             break;
 
                         default:

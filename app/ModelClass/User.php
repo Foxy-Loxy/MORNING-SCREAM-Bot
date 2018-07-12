@@ -36,7 +36,7 @@ class User
 
         Telegram::sendMessage([
             'chat_id' => $user->chat_id,
-            'text' => 'Your settings',
+            'text' => $locale->getString("main_settingsCommand"),
             'reply_markup' => $catKeyboard
         ]);
     }
