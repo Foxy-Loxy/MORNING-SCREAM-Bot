@@ -246,6 +246,9 @@ class Weather
       					$right[]= $entry;
       					
       			}
+
+                $time = (isset($right[0]) ? $right[0]['dt'] : $all[0]['dt'] - 86400);
+                $first = Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc);
       			/*
                 Telegram::sendMessage([
                     'chat_id' => $user->chat_id,
@@ -269,11 +272,11 @@ class Weather
                     'reply_markup' => Keyboard::make()
                         ->inline()
                         ->row(
-                            Keyboard::inlineButton(['text' => '>' . Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->format('d/m') . '<', 'callback_data' => 'null']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDay()->format('d/m'), 'callback_data' => 'weather 2']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(2)->format('d/m'), 'callback_data' => 'weather 3']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(3)->format('d/m'), 'callback_data' => 'weather 4']),
-                            Keyboard::inlineButton(['text' => Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->addDays(4)->format('d/m'), 'callback_data' => 'weather 5'])
+                            Keyboard::inlineButton(['text' => '>' . $first->format('d/m') . '<', 'callback_data' => 'null']),
+                            Keyboard::inlineButton(['text' => $first->addDay()->format('d/m'), 'callback_data' => 'weather 2']),
+                            Keyboard::inlineButton(['text' => $first->addDay()->format('d/m'), 'callback_data' => 'weather 3']),
+                            Keyboard::inlineButton(['text' => $first->addDay()->format('d/m'), 'callback_data' => 'weather 4']),
+                            Keyboard::inlineButton(['text' => $first->addDay()->format('d/m'), 'callback_data' => 'weather 5'])
                         )
                 ]);
             }
