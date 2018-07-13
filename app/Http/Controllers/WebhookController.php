@@ -259,8 +259,10 @@ class WebhookController extends Controller
                         case $locale->getString("main_AboutKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => $locale->getString('about_DevelopedBy') . '<a href="https://github.com/Foxy-Loxy">Kirill Avramenko</a>(@FoxyLoxy)' . "\n"
+                                'text' => $locale->getString('about_DevBy') . '<a href="https://github.com/Foxy-Loxy">Kirill Avramenko</a>(@FoxyLoxy)' . "\n"
                                             .   $locale->getString('about_Desc') . "\n"
+                                            .	'Telegram - @FoxyLoxy' . "\n"
+                                            .	'E-Mail - kavramenko2k@gmail.com' . "\n"
                                             .   '<a href="https://github.com/Foxy-Loxy/MORNING-SCREAM-Bot">' . $locale->getString('about_GitHub') . '</a>' . "\n"
                                             .   $locale->getString('about_ServicesUsed')
                                             .   '<a href="https://openweathermap.org/api">OpenWeatherMap.Org</a>' . "\n"
