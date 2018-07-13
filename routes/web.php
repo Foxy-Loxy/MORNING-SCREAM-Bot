@@ -12,7 +12,7 @@
 */
 
 //Route for Telegram webhook update. All logic will go through here
-$router->post('/webhook', 'WebhookController@trigger');
+$router->post('460903995:AAEBfWD2Kzj0TG9gUDwQNEm0GGNESopqtw8/webhook', 'WebhookController@trigger');
 $router->get('/webhook', 'WebhookController@trigger');
 
 //Testing purpose routes

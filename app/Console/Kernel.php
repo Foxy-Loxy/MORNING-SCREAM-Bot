@@ -30,10 +30,11 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
+    /*
         $schedule->call(function () {
             try {
                 Telegram::setWebhook([
-                    'url' => 'https://my-sandbox.strangled.net/morning-scream/webhook',
+                    'url' => 'https://my-sandbox.strangled.net/morning-scream/460903995:AAEBfWD2Kzj0TG9gUDwQNEm0GGNESopqtw8/webhook',
                     'certificate' => '/etc/ssl/certs/@cert.pem'
                 ]);
             } catch (TelegramResponseException $e) {
@@ -42,8 +43,8 @@ class Kernel extends ConsoleKernel
                     'text' => 'Cron job failed. Response:' . $e->getResponse()
                 ]);
             }
-        })->twiceDaily(1, 13);
-
+        })->everyMinute();
+*/
         $schedule->call(function () {
             $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC')->format('H:i'))->get();
             foreach ($timed as $time) {
