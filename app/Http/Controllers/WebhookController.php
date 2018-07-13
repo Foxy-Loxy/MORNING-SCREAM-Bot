@@ -105,7 +105,7 @@ class WebhookController extends Controller
                 [$locale->getString("main_newsKbd")],
                 [$locale->getString("main_weatherKbd")],
                 [$locale->getString("main_scheduleKbd")],
-                [$locale->getString("main_summaryKbd"), $locale->getString("main_settingsKbd")]
+                [$locale->getString("main_AboutKbd"), $locale->getString("main_settingsKbd")]
             ],
             'resize_keyboard' => true,
             'one_time_keyboard' => true
@@ -256,16 +256,24 @@ class WebhookController extends Controller
 //                      		\App\WeatherCache::truncate();
                             \App\ModelClass\Weather::deliver($user);
                             break;
-                        case $locale->getString("main_summaryKbd"):
+                        case $locale->getString("main_AboutKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
-                                'text' => $locale->getString('summary_head') . "\n===============\n". $locale->getString('summary_newsCat') . ($user->news != null ? $user->news->FancyCategories() : $locale->getString('none'))
-                                    . "\n===============\n" . $locale->getString('summary_delivTime') . ($user->schedule != null ? $user->schedule->time . ' ' . $user->schedule->utc . ' UTC' : $locale->getString('none')) . ' (' . ($user->schedule->utc_time != null ? $user->schedule->utc_time : $locale->getString('none')) . ' UTC)',
+                                'text' => $locale->getString('about_DevelopedBy') . '<a href="https://github.com/Foxy-Loxy">Kirill Avramenko</a>(@FoxyLoxy)' . "\n"
+                                            .   $locale->getString('about_Desc') . "\n"
+                                            .   '<a href="https://github.com/Foxy-Loxy/MORNING-SCREAM-Bot">' . $locale->getString('about_GitHub') . '</a>' . "\n"
+                                            .   $locale->getString('about_ServicesUsed')
+                                            .   '<a href="https://openweathermap.org/api">OpenWeatherMap.Org</a>' . "\n"
+                                            .   '<a href="https://developers.google.com/maps/documentation/">Google API (Geocoding, Timezone)</a>' . "\n"
+                                            .   '<a href="https://newsapi.org">NewsApi.Org</a>' . "\n"
+                                            .   '<a href="https://aws.amazon.com/">Amazon Web Services</a>' . "\n"
+                                            .   $locale->getString('about_Contributors') . "\n"
+                                            .   '<a href="https://github.com/DenisYaschenkoCntu">Denis Yaschenko</a>(@DenisKlein)' . $locale->getString('about_Contributor_Testing') . '|' . $locale->getString('about_Contributor_Idea') . "\n"
+                                            .   '<a href="https://github.com/skarabeyushka">Valera Silnitskii</a>(@skarabeyushka)' . $locale->getString('about_Contributor_Testing') ."\n",
                                 'parse_mode' => 'html',
                                 'reply_markup' => Keyboard::make()
                                     ->inline()
                                     ->row(
-                                        Keyboard::inlineButton(['text' => $locale->getString("summary_credits"), 'callback_data' => 'credits']),
                                         Keyboard::inlineButton(['text' => $locale->getString("summary_donate"), 'callback_data' => 'donate'])
                                     )
                             ]);

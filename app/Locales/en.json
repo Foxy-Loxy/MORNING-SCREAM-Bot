@@ -16,6 +16,16 @@
   "main_settingsKbd": "\uD83D\uDD27 Set account preferences",
   "main_summaryKbd": "\u2699 See all account preferences",
   "main_scheduleKbd": "\u23F0 Set daily delivery time",
+  "main_AboutKbd" : "\uD83E\uDD16 About",
+
+  "about_DevBy" : "Developed by ",
+  "about_Desc" : "Project is completely free and is being developed only for education and learning purpose. If you have any questions, contact developer by: ",
+  "about_GitHub" : "Project page at GitHub",
+  "about_ServicesUsed": "Services used free of charge: ",
+  "about_Contributors": "Contributors: ",
+  "about_Contributor_Testing" : "Testing",
+  "about_Contributor_Idea" : "Ideas",
+  "about_Contributor_Translation" : "Translation",
 
   "summary_head": "ACCOUNT SUMMARY",
   "summary_newsCat": "News categories you've subscribed for: ",

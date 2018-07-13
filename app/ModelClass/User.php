@@ -101,7 +101,7 @@ class User
                             ]);
                             break;
 
-                        case $locale->getString("user_Services_Enter"):
+                        case $locale->getString("user_menu_ToggleDelivKbd"):
                             $user->update([
                                 'delivery_enabled' => !$user->delivery_enabled
                             ]);
