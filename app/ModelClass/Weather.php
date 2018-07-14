@@ -238,11 +238,13 @@ class Weather
                 
 				$offset = Carbon::now()->timezone($user->schedule->utc)->format('Z');
       			$cacheBeginDate = Carbon::createFromTimestamp($all[0]['dt'])->startOfDay();
+      			$aimTime = Carbon::now()->timezone($user->schedule->utc);
       			$cacheAimDate = $cacheBeginDate;
       			$right = array();
         
       			foreach ($all as $entry) {
-      				if(Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset)->format('d-m-Y') == $cacheAimDate->format('d-m-Y'))
+      			$entryCarbon = Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset);
+      				if($entryCarbon->format('d-m-Y') == $cacheAimDate->format('d-m-Y') && $entryCarbon->format('H') >= $aimTime->format('H'))
       					$right[]= $entry;
       					
       			}
@@ -255,7 +257,7 @@ class Weather
                     'text' => Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset)->format('d-m-Y') . ' | ' .  $cacheAimDate->format('d-m-Y')
             	]);
       			*/
-                $text = '<strong>' . Carbon::createFromTimestamp($all[0]['dt'])->setTimezone($user->schedule->utc)->format('d-m-Y') . '</strong>' . "\n";
+                $text = '<strong>' . $first->format('d-m-Y') . '</strong>' . "\n";
                 foreach ($right as $entry) {
                     $temp = (((int)$entry['main']['temp_min'] + (int)$entry['main']['temp_max']) / 2);
                     $text .= ($user->weather->units == 'metric' ? Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i') : Carbon::createFromTimestamp($entry['dt'])->setTimezone($user->schedule->utc)->format('H:i A')) . ' ' . (Helper::sign($temp) == 1 ? '+' : '-') . $temp . ' ';
@@ -319,14 +321,45 @@ class Weather
 		$offset = Carbon::now()->timezone($user->schedule->utc)->format('Z');
         $cacheBeginDate = Carbon::createFromTimestamp($all[0]['dt'])->startOfDay();
         $cacheAimDate = $cacheBeginDate->addDays($page - 1);
+		$aimTime = Carbon::now()->timezone($user->schedule->utc);
         $right = array();
         
         foreach ($all as $entry) {
-      		if(Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset)->format('d-m-Y') == $cacheAimDate->format('d-m-Y'))
-      			$right[]= $entry;
+      		$entryCarbon = Carbon::createFromTimestamp($entry['dt'])->addSeconds($offset);
+      	//	Telegram::sendMessage([
+	//			'chat_id' => $user->chat_id,
+//				'text' =>  $entryCarbon->format('H') . '>=' . $aimTime->format('H')
+//			]);
+      		if($entryCarbon->format('d-m-Y') == $cacheAimDate->format('d-m-Y') ) {
+//      					Telegram::sendMessage([
+//				'chat_id' => $user->chat_id,
+//				'text' => 'Equals ' . $page
+//			]);
+      			if($page == 1) {
+      				if($entryCarbon->format('H') >= $aimTime->format('H'))
+      					$right[] = $entry;
+      			 } else {
+//      				Telegram::sendMessage([
+//						'chat_id' => $user->chat_id,
+//						'text' => 'Page NOT 1'
+//					]);
+      				$right[] = $entry;
+      			}
+      		}
         }
 
-		$time = (isset($right[0]) ? $right[0]['dt'] : $all[0]['dt'] - 86400);
+		$first = Carbon::now();
+		if (!isset($right[0])) {
+			$time = $all[0]['dt'] - 86400;
+			$first = Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc);
+//			Telegram::sendMessage([
+//				'chat_id' => $user->chat_id,
+//				'text' => 'Not set'
+//			]);
+		} else {
+			$time = $right[0]['dt'];
+			$first = Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc)->subDays($page - 1);
+		}
 
 		$text = '<strong>'  .   Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc)->format('d-m-Y')  . '</strong>' . "\n";
         foreach ($right as $entry) {
@@ -335,7 +368,7 @@ class Weather
             $text .= ' ' . $locale->getString($entry['weather'][0]['description']) . "\n";
         }
 
-        $first = Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc)->subDays($page - 1);
+//        $first = Carbon::createFromTimestamp($time)->setTimezone($user->schedule->utc)->subDays($page - 1);
 
         Telegram::answerCallbackQuery([
             'callback_query_id' => $callbackId
