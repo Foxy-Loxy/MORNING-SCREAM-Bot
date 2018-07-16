@@ -52,10 +52,16 @@ class Kernel extends ConsoleKernel
           			return new \App\Helpers\Localize($time->user->lang);
           		});
                 $serviceArr = explode(',', $time->user->services);
-                if (in_array('news', $serviceArr) && $time->user->delivery_enabled == true)
-                    News::deliver($time->user);
-                if (in_array('weather', $serviceArr) && $time->user->delivery_enabled == true)
-                    Weather::deliver($time->user);
+                try {
+                    if (in_array('news', $serviceArr) && $time->user->delivery_enabled == true)
+                        News::deliver($time->user);
+                    if (in_array('weather', $serviceArr) && $time->user->delivery_enabled == true)
+                        Weather::deliver($time->user);
+                } catch (\Exception $e) {
+                    $time->user->update([
+                        'delivery_enabled' => false
+                    ]);
+                }
             }
         })->everyMinute();
 
