@@ -1,21 +1,20 @@
-# Lumen PHP Framework
+# Morning Scream Bot
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/lumen-framework/v/unstable.svg)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://poser.pugx.org/laravel/lumen-framework/license.svg)](https://packagist.org/packages/laravel/lumen-framework)
+Telegram Lumen-Based statefull bot for daily news and weather delivery. Developed only in education purposes. For any questions contact me at [Telegram](https://t.me/foxyloxy) 
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+## Instalationn
 
-## Official Documentation
+1. Clone project
+2. Change directory to project
+3. Run `composer install`
+4. Populate .env file with API Keys
+5. Run `php artisan migrate`
+6. Enjoy !
 
-Documentation for the framework can be found on the [Lumen website](http://lumen.laravel.com/docs).
+## Contribution
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+If you fund any issues with software, pleace consider openning new issue, so I can react to it
 
 ## License
 
-The Lumen framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
+The Morning Scream Bot is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT)
