@@ -30,21 +30,6 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-    /*
-        $schedule->call(function () {
-            try {
-                Telegram::setWebhook([
-                    'url' => 'https://my-sandbox.strangled.net/morning-scream/460903995:AAEBfWD2Kzj0TG9gUDwQNEm0GGNESopqtw8/webhook',
-                    'certificate' => '/etc/ssl/certs/@cert.pem'
-                ]);
-            } catch (TelegramResponseException $e) {
-                Telegram::sendMessage([
-                    'chat_id' => '189423549',
-                    'text' => 'Cron job failed. Response:' . $e->getResponse()
-                ]);
-            }
-        })->everyMinute();
-*/
         $schedule->call(function () {
             $timed = \App\Schedule::where('utc_time', Carbon::now()->setTimezone('UTC')->format('H:i'))->get();
             foreach ($timed as $time) {
