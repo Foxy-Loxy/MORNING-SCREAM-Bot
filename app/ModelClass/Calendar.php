@@ -86,7 +86,15 @@ class Calendar
             switch ($user->function_state) {
             
           		case 'WAITING_FOR_TOKEN':
-          			
+          			GoogleApiHelper::getClient($user, $input);
+                    Telegram::sendMessage([
+                        'chat_id' => $user->chat_id,
+                        'text' => $locale->getString('calendar_Auth_Success'),
+                        'reply_markup' => $menuKeyboard,
+                    ]);
+                    $user->update([
+                        'function_state' => 'WAITING_FOR_CALENDAR_MENU'
+                    ]);
           			break;
 
                 case 'PROCESSING_AUTH':

@@ -14,7 +14,7 @@ use App\User;
 
 class GoogleApiHelper {
 
-    public static function getClient(User $user) {
+    public static function getClient(User $user, string $key = '') {
 
         $client = new \Google_Client();
         $client->setApplicationName('Morning Scream Calendar Integration');
@@ -22,6 +22,9 @@ class GoogleApiHelper {
         $client->setAuthConfig(base_path(env('GOOGLE_AUTH_CREDENTIALS_PATH')));
         $client->setAccessType('offline');
 
+        if ( $key != '') {
+            self::getClient($user, $key);
+        }
         // Load previously authorized credentials from a file.
         $credentials = $user->calendar;
         if ($credentials != null) {
