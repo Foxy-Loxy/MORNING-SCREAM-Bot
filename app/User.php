@@ -26,7 +26,11 @@ class User extends Model
     }
     
     public function schedule(){
-        return $this->hasOne(\App\Schedule::class, 'chat_id', 'chat_id');
+        return $this->hasOne(Schedule::class, 'chat_id', 'chat_id');
+    }
+
+    public function calendar(){
+        return $this->hasOne(Calendar::class, 'chat_id', 'chat_id');
     }
 
     public  function FancyServices(){

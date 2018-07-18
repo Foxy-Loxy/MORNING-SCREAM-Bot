@@ -102,10 +102,9 @@ class WebhookController extends Controller
         
         $menuKeyboard = Keyboard::make([
             'keyboard' => [
-                [$locale->getString("main_newsKbd")],
+                [$locale->getString("main_calendarKbd") , $locale->getString("main_newsKbd")],
                 [$locale->getString("main_weatherKbd")],
                 [$locale->getString("main_scheduleKbd")],
-                [$locale->getString("main_calendarKbd")],
                 [$locale->getString("main_AboutKbd"), $locale->getString("main_settingsKbd")]
             ],
             'resize_keyboard' => true,

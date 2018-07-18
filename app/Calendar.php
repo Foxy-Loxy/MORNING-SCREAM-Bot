@@ -14,7 +14,7 @@ class Calendar extends Model
     const NAME = 'calendar';
 
     protected $fillable = [
-        'chat_id', 'access_token', 'refresh_token'
+        'chat_id', 'data'
     ];
 
     public function user(){
