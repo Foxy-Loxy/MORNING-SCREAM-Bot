@@ -10,7 +10,7 @@ namespace App\Helpers;
 
 
 use App\Calendar;
-use App\ModelClass\User;
+use App\User;
 
 class GoogleApiHelper {
 
@@ -19,7 +19,7 @@ class GoogleApiHelper {
         $client = new \Google_Client();
         $client->setApplicationName('Morning Scream Calendar Integration');
         $client->setScopes(\Google_Service_Calendar::CALENDAR_READONLY);
-        $client->setAuthConfig(env(''));
+        $client->setAuthConfig(base_path(env('GOOGLE_AUTH_CREDENTIALS_PATH')));
         $client->setAccessType('offline');
 
         // Load previously authorized credentials from a file.

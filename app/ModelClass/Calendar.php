@@ -84,6 +84,10 @@ class Calendar
                     break;
             }
             switch ($user->function_state) {
+            
+          		case 'WAITING_FOR_TOKEN':
+          			
+          			break;
 
                 case 'PROCESSING_AUTH':
                     $client = GoogleApiHelper::getClient($user);
@@ -104,11 +108,14 @@ class Calendar
                             'text' => $locale->getString('calendar_Auth_Success'),
                             'reply_markup' => $menuKeyboard,
                         ]);
+                        $user->update([
+                            'function_state' => 'WAITING_FOR_CALENDAR_MENU'
+                        ]);
                         return true;
                     }
                     break;
 
-                case 'WAITING_FOR_CATEGORY_MENU':
+                case 'WAITING_FOR_CALENDAR_MENU':
                     switch ($input) {
                         case $locale->getString('calendar_menu_Auth'):
                             Telegram::sendMessage([
@@ -138,6 +145,14 @@ class Calendar
                             }
 
                             break;
+                        
+                        default : 
+                      		Telegram::sendMessage([
+                          		'chat_id' => $user->chat_id,
+                                'text' => $locale->getString('calendar_Menu_Fail'),
+                                'reply_markup' => $menuKeyboard
+                            ]);
+                      		break;
                     }
                     break;
 
