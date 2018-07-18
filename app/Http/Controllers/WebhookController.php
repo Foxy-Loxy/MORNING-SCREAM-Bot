@@ -1,5 +1,6 @@
 <?php namespace App\Http\Controllers;
 
+use App\Calendar;
 use App\Helpers\Helper;
 use App\Helpers\Localize;
 use App\News;
@@ -215,6 +216,9 @@ class WebhookController extends Controller
                         case User::NAME:
                             \App\ModelClass\User::scheduleConfirm($user, $input, $menuKeyboard);
                             break;
+                        case Calendar::NAME:
+                            \App\ModelClass\Calendar::scheduleConfirm($user, $input, $menuKeyboard);
+                            break;
                         default:
                             $user->update(['function_state' => null, 'function' => null]);
                             break;
@@ -238,6 +242,10 @@ class WebhookController extends Controller
 
                         case $locale->getString("main_weatherKbd"):
                       		\App\ModelClass\Weather::scheduleCall($user);
+                            break;
+
+                        case $locale->getString("main_calendarKbd"):
+                            \App\ModelClass\Calendar::scheduleCall($user);
                             break;
 
                         case $locale->getString("main_scheduleKbd"):
