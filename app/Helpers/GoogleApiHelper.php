@@ -23,7 +23,7 @@ class GoogleApiHelper {
         $client->setAccessType('offline');
 
         if ( $key != '') {
-            self::getClient($user, $key);
+            self::clientAuth($user, $client ,$key);
         }
         // Load previously authorized credentials from a file.
         $credentials = $user->calendar;

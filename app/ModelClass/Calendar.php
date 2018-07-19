@@ -40,7 +40,6 @@ class Calendar
         ]);
 
 
-
     }
 
     static public function scheduleConfirm(User $user, string $input, Keyboard $exitKbd)
@@ -67,7 +66,7 @@ class Calendar
 
 
         if ($user->function == \App\Calendar::NAME && $user->function_state != null) {
-			
+
             switch ($input) {
 
                 case $locale->getString('cancel'):
@@ -83,36 +82,12 @@ class Calendar
                     return false;
                     break;
             }
-            
-            try {
-            switch ($user->function_state) {
-            
-          		case 'WAITING_FOR_TOKEN':
-          			GoogleApiHelper::getClient($user, $input);
-                    Telegram::sendMessage([
-                        'chat_id' => $user->chat_id,
-                        'text' => $locale->getString('calendar_Auth_Success'),
-                        'reply_markup' => $menuKeyboard,
-                    ]);
-                    $user->update([
-                        'function_state' => 'WAITING_FOR_CALENDAR_MENU'
-                    ]);
-          			break;
 
-                case 'PROCESSING_AUTH':
-                    $client = GoogleApiHelper::getClient($user);
-                    if (is_string($client)) {
-                        Telegram::sendMessage([
-                            'chat_id' => $user->chat_id,
-                            'text' => $locale->getString('calendar_Auth_Url') . '<a href="' . $client    .'">' . $locale->getString('calendar_Auth_button') .'</a>',
-                            'reply_markup' => $canKeyboard,
-                            'parse_mode' => 'html'
-                        ]);
-                        $user->update([
-                            'function_state' => 'WAITING_FOR_TOKEN'
-                        ]);
-                        return true;
-                    } else {
+            try {
+                switch ($user->function_state) {
+
+                    case 'WAITING_FOR_TOKEN':
+                        GoogleApiHelper::getClient($user, $input);
                         Telegram::sendMessage([
                             'chat_id' => $user->chat_id,
                             'text' => $locale->getString('calendar_Auth_Success'),
@@ -121,60 +96,84 @@ class Calendar
                         $user->update([
                             'function_state' => 'WAITING_FOR_CALENDAR_MENU'
                         ]);
-                        return true;
-                    }
-                    break;
+                        break;
 
-                case 'WAITING_FOR_CALENDAR_MENU':
-                    switch ($input) {
-                        case $locale->getString('calendar_menu_Auth'):
+                    case 'PROCESSING_AUTH':
+                        $client = GoogleApiHelper::getClient($user);
+                        if (is_string($client)) {
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
-                                'text' => $locale->getString('calendar_Auth_Enter'),
-                                'reply_markup' => $canKeyboard
+                                'text' => $locale->getString('calendar_Auth_Url') . '<a href="' . $client . '">' . $locale->getString('calendar_Auth_button') . '</a>',
+                                'reply_markup' => $canKeyboard,
+                                'parse_mode' => 'html'
                             ]);
                             $user->update([
-                                'function_state' => 'PROCESSING_AUTH'
+                                'function_state' => 'WAITING_FOR_TOKEN'
                             ]);
-                            break;
+                            return true;
+                        } else {
+                            Telegram::sendMessage([
+                                'chat_id' => $user->chat_id,
+                                'text' => $locale->getString('calendar_Auth_Success'),
+                                'reply_markup' => $menuKeyboard,
+                            ]);
+                            $user->update([
+                                'function_state' => 'WAITING_FOR_CALENDAR_MENU'
+                            ]);
+                            return true;
+                        }
+                        break;
 
-                        case $locale->getString('calendar_menu_DeAuth'):
-                            if ($user->calendar != null){
-                                $user->calendar->delete();
+                    case 'WAITING_FOR_CALENDAR_MENU':
+                        switch ($input) {
+                            case $locale->getString('calendar_menu_Auth'):
                                 Telegram::sendMessage([
                                     'chat_id' => $user->chat_id,
-                                    'text' => $locale->getString('calendar_DeAuth_Success'),
-                                    'reply_markup' => $menuKeyboard
+                                    'text' => $locale->getString('calendar_Auth_Enter'),
+                                    'reply_markup' => $canKeyboard
                                 ]);
-                            } else {
+                                $user->update([
+                                    'function_state' => 'PROCESSING_AUTH'
+                                ]);
+                                break;
+
+                            case $locale->getString('calendar_menu_DeAuth'):
+                                if ($user->calendar != null) {
+                                    $user->calendar->delete();
+                                    Telegram::sendMessage([
+                                        'chat_id' => $user->chat_id,
+                                        'text' => $locale->getString('calendar_DeAuth_Success'),
+                                        'reply_markup' => $menuKeyboard
+                                    ]);
+                                } else {
+                                    Telegram::sendMessage([
+                                        'chat_id' => $user->chat_id,
+                                        'text' => $locale->getString('calendar_DeAuth_Fail'),
+                                        'reply_markup' => $menuKeyboard
+                                    ]);
+                                }
+
+                                break;
+
+                            default :
                                 Telegram::sendMessage([
                                     'chat_id' => $user->chat_id,
-                                    'text' => $locale->getString('calendar_DeAuth_Fail'),
+                                    'text' => $locale->getString('calendar_Menu_Fail'),
                                     'reply_markup' => $menuKeyboard
                                 ]);
-                            }
+                                break;
+                        }
+                        break;
 
-                            break;
-                        
-                        default : 
-                      		Telegram::sendMessage([
-                          		'chat_id' => $user->chat_id,
-                                'text' => $locale->getString('calendar_Menu_Fail'),
-                                'reply_markup' => $menuKeyboard
-                            ]);
-                      		break;
-                    }
-                    break;
-
-                case 'WAITING_FOR_CATEGORY':
+                    case 'WAITING_FOR_CATEGORY':
 
 
-                    break;
+                        break;
 
-            }
+                }
             } catch (\Exception $e) {
-        		Telegram::sendMessage([
-              		'chat_id' => $user->chat_id,
+                Telegram::sendMessage([
+                    'chat_id' => $user->chat_id,
                     'text' => $e->getMessage(),
                     'reply_markup' => $menuKeyboard
                 ]);
@@ -183,7 +182,8 @@ class Calendar
         return true;
     }
 
-    static public function deliver(User $user) {
+    static public function deliver(User $user)
+    {
 
     }
 
