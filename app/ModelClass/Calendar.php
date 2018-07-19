@@ -67,7 +67,7 @@ class Calendar
 
 
         if ($user->function == \App\Calendar::NAME && $user->function_state != null) {
-
+			
             switch ($input) {
 
                 case $locale->getString('cancel'):
@@ -83,6 +83,8 @@ class Calendar
                     return false;
                     break;
             }
+            
+            try {
             switch ($user->function_state) {
             
           		case 'WAITING_FOR_TOKEN':
@@ -169,6 +171,13 @@ class Calendar
 
                     break;
 
+            }
+            } catch (\Exception $e) {
+        		Telegram::sendMessage([
+              		'chat_id' => $user->chat_id,
+                    'text' => $e->getMessage(),
+                    'reply_markup' => $menuKeyboard
+                ]);
             }
         }
         return true;
