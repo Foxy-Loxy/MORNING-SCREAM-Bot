@@ -216,7 +216,7 @@ class Calendar
                 'text' => $locale->getString('calendar_Delivery_Unathorized')
             ]);
             $services = $user->services;
-            $servArr = explode($services);
+            $servArr = explode(',', $services);
             $pos = array_search('calendar', $servArr);
             if ($pos !== false)
                 unset($servArr[$pos]);
@@ -225,7 +225,7 @@ class Calendar
 
         $service = new \Google_Service_Calendar($client);
 
-        $events = $service->events->listEvents('primaty', [
+        $events = $service->events->listEvents('primary', [
             'maxResults' => 10,
             'orderBy' => 'startTime',
             'singleEvents' => true,
