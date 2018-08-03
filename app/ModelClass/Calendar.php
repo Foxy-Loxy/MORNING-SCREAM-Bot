@@ -207,7 +207,53 @@ class Calendar
 
     static public function deliver(User $user)
     {
+        $locale = app(Localize::class);
 
+        $client = GoogleApiHelper::getClient($user);
+        if (is_string($client)) {
+            Telegram::sendMessage([
+                'chat_id' => $user->chat_id,
+                'text' => $locale->getString('calendar_Delivery_Unathorized')
+            ]);
+            $services = $user->services;
+            $servArr = explode($services);
+            $pos = array_search('calendar', $servArr);
+            if ($pos !== false)
+                unset($servArr[$pos]);
+            return false;
+        }
+
+        $service = new \Google_Service_Calendar($client);
+
+        $events = $service->events->listEvents('primaty', [
+            'maxResults' => 10,
+            'orderBy' => 'startTime',
+            'singleEvents' => true,
+            'timeMin' => date('c'),
+            'timeMax' => Carbon::now()->startOfDay()->addDay()->format('c')
+        ]);
+
+        $tlgString = '';
+
+        if (empty($events->getItems()))
+            $tlgString = $locale->getString('calendar_Delivery_Empty');
+        else {
+            foreach ($events->getItems() as $event) {
+                $start = $event->start->dateTime;
+                if (empty($start)) {
+                    $start = $event->start->date;
+                }
+                $tlgString .= Carbon::parse($start)->format('H-m') . ' | ' . $event->getSummary() . "\n";
+            }
+        }
+
+        Telegram::sendMessage([
+           'chat_id' => $user->chat_id,
+           'text' => '<strong>' . $locale->getString('calendat_Delivery_Header') . '</strong>' . "\n" . $tlgString,
+           'parse_mode' => 'html'
+        ]);
+
+        return true;
     }
 
 }

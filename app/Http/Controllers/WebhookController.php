@@ -261,9 +261,12 @@ class WebhookController extends Controller
                             \App\ModelClass\News::deliver($user);
                             break;
                         case "Force Weather":
-//                      		\App\WeatherCache::truncate();
                             \App\ModelClass\Weather::deliver($user);
                             break;
+                        case "Force Calendar":
+                            \App\ModelClass\Calendar::deliver($user);
+                            break;
+
                         case $locale->getString("main_AboutKbd"):
                             Telegram::sendMessage([
                                 'chat_id' => $rqData['message']['chat']['id'],
