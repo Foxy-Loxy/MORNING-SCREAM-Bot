@@ -54,7 +54,7 @@ class GoogleApiHelper {
         $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
 
         Telegram::sendMessage([
-            'chat_id' => $user->id,
+            'chat_id' => $user->chat_id,
             'text' => print_r($accessToken, true)
         ]);
         // Store the credentials to disk.
