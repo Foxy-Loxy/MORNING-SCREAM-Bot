@@ -54,11 +54,7 @@ class GoogleApiHelper {
         // Exchange authorization code for an access token.
         $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
 
-        Telegram::sendMessage([
-            'chat_id' => $user->chat_id,
-            'text' => print_r($accessToken, true)
-        ]);
-        if (isset($accessToken->error))
+        if (isset($accessToken['error']))
             return false;
         // Store the credentials to disk.
         $cal = $user->calendar;
