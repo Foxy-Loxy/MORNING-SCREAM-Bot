@@ -192,6 +192,6 @@
   "calendar_DeAuth_Success" : "Аккаунт Google Calendar успішно деавторизовано.",
   "calendar_DeAuth_Fail" : "Проблема. Здається що ви не авторизовані у акаунт.",
 
-  "calendar_Delivery_header" : "Ваші плани на сьогодні вже тут ! ",
+  "calendar_Delivery_Header" : "Ваші плани на сьогодні вже тут ! ",
   "calendar_Delivery_Empty" : "Здається у тебе сьогодні немає справ ! Ура !"
 }

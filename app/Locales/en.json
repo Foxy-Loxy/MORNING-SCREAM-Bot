@@ -199,7 +199,7 @@
   "calendar_DeAuth_Success" : "Successfully removed your Google Calendar account.",
   "calendar_DeAuth_Fail" : "Failed. Looks like you have no account to delete.",
 
-  "calendar_Delivery_header" : "Your events for today are here! ",
+  "calendar_Delivery_Header" : "Your events for today are here! ",
   "calendar_Delivery_Empty" : "Looks like you're free today ! Yay !"
 
 }

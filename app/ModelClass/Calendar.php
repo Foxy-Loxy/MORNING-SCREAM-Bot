@@ -243,7 +243,7 @@ class Calendar
                 if (empty($start)) {
                     $start = $event->start->date;
                 }
-                $tlgString .= Carbon::parse($start)->format('H-m') . ' | ' . $event->getSummary() . "\n";
+                $tlgString .= Carbon::parse($start)->format('H:i') . ' | ' . $event->getSummary() . "\n";
             }
         }
 
