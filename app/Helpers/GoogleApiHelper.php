@@ -24,7 +24,9 @@ class GoogleApiHelper {
         $client->setAccessType('offline');
 
         if ( $key != '') {
-            self::clientAuth($user, $client ,$key);
+            $isOk = self::clientAuth($user, $client ,$key);
+            if(!$isOk)
+          		return false;
         }
         // Load previously authorized credentials from a file.
         $credentials = $user->calendar;
@@ -52,11 +54,10 @@ class GoogleApiHelper {
 
         // Exchange authorization code for an access token.
         $accessToken = $client->fetchAccessTokenWithAuthCode($authCode);
-
-        Telegram::sendMessage([
-            'chat_id' => $user->id,
-            'text' => print_r($accessToken, true)
-        ]);
+        
+        if(isset($accessToken['error']))
+      		return false;
+        
         // Store the credentials to disk.
         $cal = $user->calendar;
         if ($user->calendar == null) {
