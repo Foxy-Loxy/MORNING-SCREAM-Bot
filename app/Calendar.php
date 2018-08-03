@@ -12,6 +12,8 @@ class Calendar extends Model
 {
 
     const NAME = 'calendar';
+    
+    protected $primaryKey = 'chat_id';
 
     protected $fillable = [
         'chat_id', 'data'
