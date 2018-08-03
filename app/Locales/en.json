@@ -11,12 +11,14 @@
   "main_scheduleCommand": "Schedule",
   "main_wrongInput": "Unacceptable",
 
+
   "main_newsKbd": "\uD83D\uDCF0 Set news preferences",
   "main_weatherKbd": "\uD83C\uDF21 Set weather preferences",
   "main_settingsKbd": "\uD83D\uDD27 Set account preferences",
   "main_summaryKbd": "\u2699 See all account preferences",
   "main_scheduleKbd": "\u23F0 Set daily delivery time",
   "main_AboutKbd" : "\uD83E\uDD16 About",
+  "main_calendarKbd" : "\uD83D\uDCC5 Set up Google Calendar",
 
   "about_DevBy" : "Developed by ",
   "about_Desc" : "Project is completely free and is being developed only for education and learning purpose. If you have any questions, contact developer by: ",
@@ -129,6 +131,7 @@
 
   "news" : "News",
   "weather" : "Weather",
+  "calendar" : "Calendar",
 
   "thunderstorm with light rain" :"\u26C8 Thunderstorm with light rain",
   "thunderstorm with rain" :"\u26C8 Thunderstorm with rain",
@@ -182,6 +185,21 @@
   "overcast clouds" : "\u2601 Overcast clouds",
 
   "metric" : "metric",
-  "imperial" : "imperial"
+  "imperial" : "imperial",
+
+  "calendar_menu_Enter" : "To manage your Google Calendar account, choose actions below",
+  "calendar_menu_Auth" : "\uD83D\uDD8B Sign In to Google Calendar",
+  "calendar_menu_DeAuth" : "\uD83D\uDD25 Sign Out from Google Calendar",
+
+  "calendar_Auth_Url" : "In order to Sign In you must press \"Sign In\" link, choose your Google Account and paste in chat secret code. ",
+  "calendar_Auth_button" : "Sign-In",
+  "calendar_Auth_Invalid_Code" : "Incorrect code. Check whether you correctly copied it.",
+  "calendar_Auth_Success" : "Success ! You've enabled calendar delivery with your Google Calendar !",
+
+  "calendar_DeAuth_Success" : "Successfully removed your Google Calendar account.",
+  "calendar_DeAuth_Fail" : "Failed. Looks like you have no account to delete.",
+
+  "calendar_Delivery_header" : "Your events for today are here! ",
+  "calendar_Delivery_Empty" : "Looks like you're free today ! Yay !"
 
 }

@@ -48,6 +48,7 @@ class User
             'keyboard' => [
                 [$locale->getString("user_Services_NewsKbd")],
                 [$locale->getString("user_Services_WeatherKbd")],
+                [$locale->getString("user_Services_CalendarKbd")],
                 [$locale->getString('cancel')]
             ],
             'resize_keyboard' => true,
@@ -161,6 +162,13 @@ class User
                                 unset($serArr[array_search('weather', $serArr)]);
                             else
                                 $serArr[] = 'weather';
+                            break;
+
+                        case $locale->getString("user_Services_CalendarKbd"):
+                            if (in_array('calendar', $serArr))
+                                unset($serArr[array_search('calendar', $serArr)]);
+                            else
+                                $serArr[] = 'calendar';
                             break;
 
                         default:

@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\ModelClass\Calendar;
 use App\ModelClass\News;
 use App\ModelClass\Weather;
 use App\NewsCache;
@@ -42,6 +43,8 @@ class Kernel extends ConsoleKernel
                         News::deliver($time->user);
                     if (in_array('weather', $serviceArr) && $time->user->delivery_enabled == true)
                         Weather::deliver($time->user);
+                    if (in_array('calendar', $serviceArr) && $time->user->delivery_enabled == true)
+                        Calendar::deliver($time->user);
                 } catch (\Exception $e) {
                     $time->user->update([
                         'delivery_enabled' => false

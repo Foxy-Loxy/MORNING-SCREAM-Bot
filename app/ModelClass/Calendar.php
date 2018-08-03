@@ -249,7 +249,7 @@ class Calendar
 
         Telegram::sendMessage([
            'chat_id' => $user->chat_id,
-           'text' => '<strong>' . $locale->getString('calendat_Delivery_Header') . '</strong>' . "\n" . $tlgString,
+           'text' => '<strong>' . $locale->getString('calendar_Delivery_Header') . '</strong>' . Carbon::now()->format('Y-m-d') .  "\n" . $tlgString,
            'parse_mode' => 'html'
         ]);
 

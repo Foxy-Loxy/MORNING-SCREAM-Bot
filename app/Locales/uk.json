@@ -17,6 +17,7 @@
   "main_summaryKbd" : "\u2699 Побачити підсумок усіх налаштувань",
   "main_scheduleKbd" : "\u23F0 Встановити час щоденної доставки",
   "main_AboutKbd" : "\uD83E\uDD16 Про бота",
+  "main_calendarKbd" : "\uD83D\uDCC5 Налаштувати Google Calendar",
 
   "about_DevBy" : "Розробив ",
   "about_Desc" : "Проект є безковштовним та розроблюється виключно з навчальною та пізнавальною метою. За будь-якими питаннями звертайтеся до розробника за цими контакними данними: ",
@@ -124,6 +125,7 @@
 
   "news" : "Новини",
   "weather" : "Погода",
+  "calendar" : "Календар",
 
   "thunderstorm with light rain" :"\u26C8 Гроза з слабким дощем",
   "thunderstorm with rain" :"\u26C8 Гроза з дощем",
@@ -176,5 +178,20 @@
   "broken clouds" : "\uD83C\uDF25 Хмарно",
   "overcast clouds" : "\u2601 Хмарно з проясненнями",
   "metric" : "метричні",
-  "imperial" : "імперіальні"
+  "imperial" : "імперіальні",
+
+  "calendar_menu_Enter" : "Для керування Вашим Google Calendar аккаунтом, виберіть дії наведені нижче",
+  "calendar_menu_Auth" : "\uD83D\uDD8B Увійти до Google Calendar",
+  "calendar_menu_DeAuth" : "\uD83D\uDD25 Вийти з Google Calendar",
+
+  "calendar_Auth_Url" : "Для того щоб увійти, натисніть на посилання \"Увійти\",  виберіть Ваш Google аккаунт та зкопіюйте сюди секретний код. ",
+  "calendar_Auth_button" : "Увійти",
+  "calendar_Auth_Invalid_Code" : "Невірний кож. Перевірте чи правильно Ви його скопіювали.",
+  "calendar_Auth_Success" : "Успіх ! Тепер ви авторизовані у Google Calendar !",
+
+  "calendar_DeAuth_Success" : "Аккаунт Google Calendar успішно деавторизовано.",
+  "calendar_DeAuth_Fail" : "Проблема. Здається що ви не авторизовані у акаунт.",
+
+  "calendar_Delivery_header" : "Ваші плани на сьогодні вже тут ! ",
+  "calendar_Delivery_Empty" : "Здається у тебе сьогодні немає справ ! Ура !"
 }
