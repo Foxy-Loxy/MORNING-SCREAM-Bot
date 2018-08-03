@@ -23,9 +23,10 @@ class GoogleApiHelper {
         $client->setAuthConfig(base_path(env('GOOGLE_AUTH_CREDENTIALS_PATH')));
         $client->setAccessType('offline');
 
-        if ( $key != '') {
-            self::clientAuth($user, $client ,$key);
-        }
+        if ( $key != '')
+            if (!self::clientAuth($user, $client ,$key))
+                return false;
+
         // Load previously authorized credentials from a file.
         $credentials = $user->calendar;
         if ($credentials != null) {
@@ -57,6 +58,8 @@ class GoogleApiHelper {
             'chat_id' => $user->chat_id,
             'text' => print_r($accessToken, true)
         ]);
+        if (isset($accessToken->error))
+            return false;
         // Store the credentials to disk.
         $cal = $user->calendar;
         if ($user->calendar == null) {

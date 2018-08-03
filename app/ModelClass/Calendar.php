@@ -87,8 +87,7 @@ class Calendar
                 switch ($user->function_state) {
 
                     case 'WAITING_FOR_TOKEN':
-                        $status = GoogleApiHelper::getClient($user, $input);
-                        if ($status === false) {
+                        if (!GoogleApiHelper::getClient($user, $input)) {
                             Telegram::sendMessage([
                                 'chat_id' => $user->chat_id,
                                 'text' => $locale->getString('calendar_Auth_Invalid_Code'),
