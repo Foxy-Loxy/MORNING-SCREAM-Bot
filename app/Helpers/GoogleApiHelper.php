@@ -56,6 +56,7 @@ class GoogleApiHelper {
         $cal = $user->calendar;
         if ($user->calendar == null) {
             $cal = Calendar::create([
+          		'chat_id' => $user->chat_id,
                 'data' => json_encode($accessToken)
             ]);
         } else {
