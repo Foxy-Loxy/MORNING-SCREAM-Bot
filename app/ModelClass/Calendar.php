@@ -148,6 +148,15 @@ class Calendar
                                     ]);
                                     return true;
                                 } else {
+                                    $services = $user->services;
+                                    $servArr = explode(',', $services);
+                                    $pos = array_search('calendar', $servArr);
+                                    if ($pos === false) {
+                                        $servArr[] = 'calendar';
+                                        $user->services = implode(',', $servArr);
+                                        $user->save();
+                                    }
+
                                     Telegram::sendMessage([
                                         'chat_id' => $user->chat_id,
                                         'text' => $locale->getString('calendar_Auth_Success'),
@@ -163,6 +172,11 @@ class Calendar
                             case $locale->getString('calendar_menu_DeAuth'):
                                 if ($user->calendar != null) {
                                     $user->calendar->delete();
+                                    $services = $user->services;
+                                    $servArr = explode(',', $services);
+                                    $pos = array_search('calendar', $servArr);
+                                    if ($pos !== false)
+                                        unset($servArr[$pos]);
                                     Telegram::sendMessage([
                                         'chat_id' => $user->chat_id,
                                         'text' => $locale->getString('calendar_DeAuth_Success'),
