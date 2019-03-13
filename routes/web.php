@@ -23,9 +23,10 @@ $router->get('/msgMe', 'TestControllersController@sendMessageToMe');
 $router->get('/setwh', function () {
                 try{
                     Telegram::setWebhook([
-                        'url' => 'https://my-sandbox.strangled.net/morning-scream/webhook',
+                        'url' => 'https://my-sandbox.strangled.net/morning-scream/' . env('TELEGRAM_BOT_TOKEN') .'/webhook',
                         'certificate' => '/etc/ssl/certs/@cert.pem'
                     ]);
+                    echo 'qwe';
                 } catch(TelegramResponseException $e) {
                     Telegram::sendMessage([
                         'chat_id' => '189423549',
